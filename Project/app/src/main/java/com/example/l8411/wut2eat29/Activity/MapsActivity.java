@@ -12,10 +12,15 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.Menu;
 import android.view.MenuItem;
 
 import com.example.l8411.wut2eat29.Fragment.FriendListFragment;
+import com.example.l8411.wut2eat29.Fragment.ProfileFragment;
+import com.example.l8411.wut2eat29.Model.UserProfile;
 import com.example.l8411.wut2eat29.R;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -24,26 +29,33 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 
-public class MapsActivity extends FragmentActivity implements OnMapReadyCallback {
+import java.util.ArrayList;
+
+public class MapsActivity extends AppCompatActivity implements OnMapReadyCallback {
 
     private GoogleMap mMap;
     private FragmentManager fragmentManager;
     private SupportMapFragment mMapFragment;
-    private SupportMapFragment mMapFragment2;
+    private ProfileFragment mProfileFragmet;
     private Fragment mFriendFragment;
-    private boolean justforfun;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_maps);
         fragmentManager = getSupportFragmentManager();
-        justforfun = true;
 
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         mMapFragment = SupportMapFragment.newInstance();
-        fragmentManager.beginTransaction().add(R.id.container, mMapFragment).commit();
-        mMapFragment.getMapAsync(this);
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(MapsActivity.this,
+                    new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
+                    1);
+        } else {
+            fragmentManager.beginTransaction().add(R.id.container, mMapFragment).commit();
+            mMapFragment.getMapAsync(this);
+        }
 
 
 //        TODO: add and create other fragments
@@ -64,7 +76,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             switch (item.getItemId()) {
                 case R.id.navigation_home:
                     fragmentManager.beginTransaction().replace(R.id.container, mMapFragment).commit();
-                    justforfun = true;
                     mMapFragment.getMapAsync(MapsActivity.this);
                     return true;
                 case R.id.navigation_dashboard:
@@ -76,7 +87,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                     //mMapFragment2.getMapAsync(MapsActivity.this);
                     return true;
                 case R.id.navigation_notifications:
-
+                    String[] top3 = {"Aa", "Bb", "Cc"};
+                    mProfileFragmet = mProfileFragmet.newInstance(new UserProfile(001,top3, new ArrayList<String>(), new ArrayList<String>()));
+                    fragmentManager.beginTransaction().replace(R.id.container,mProfileFragmet).commit();
                     return true;
             }
             return false;
@@ -97,34 +110,61 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         mMap = googleMap;
 
         // Add a marker in Sydney and move the camera
-        if (justforfun) {
-            LatLng beijing = new LatLng(39.9138184, 116.363625);
-            mMap.addMarker(new MarkerOptions().position(beijing).title("Marker in Beijing"));
-            mMap.moveCamera(CameraUpdateFactory.newLatLng(beijing));
+
+        Log.d("in", "no in 1");
+        double Lat = 0;
+        double log = 0;
+        LocationManager lm = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+
+
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+
         } else {
-            Log.d("in", "no in 1");
-            double Lat = 0;
-            double log = 0;
-            LocationManager lm = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-
-
-            if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-
-            }else{
-                Log.d("emmmm", "wtf");
-                Location location = lm.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-                Lat = location.getLatitude();
-                log = location.getLongitude();
-                Log.d("in", "no in 2");
-                mMap.setMyLocationEnabled(true);
-            }
-
-
-            LatLng mPosition = new LatLng(Lat, log);
-            mMap.addMarker(new MarkerOptions().position(mPosition).title("Marker my position"));
-            mMap.moveCamera(CameraUpdateFactory.newLatLng(mPosition));
-
+            Log.d("emmmm", "wtf");
+            Location location = lm.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+            Lat = location.getLatitude();
+            log = location.getLongitude();
+            Log.d("in", "no in 2");
+            mMap.setMyLocationEnabled(true);
         }
 
+
+        LatLng mPosition = new LatLng(Lat, log);
+        mMap.addMarker(new MarkerOptions().position(mPosition).title("Marker my position"));
+        mMap.moveCamera(CameraUpdateFactory.newLatLng(mPosition));
+
+
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_main, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+
+        if (id == R.id.action_addContact) {
+
+            return true;
+        }
+
+        if (id == R.id.action_startVote) {
+
+            return true;
+        }
+
+        if (id == R.id.action_Invitation) {
+
+            return true;
+        }
+
+        if (id == R.id.action_Setting) {
+
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
     }
 }
