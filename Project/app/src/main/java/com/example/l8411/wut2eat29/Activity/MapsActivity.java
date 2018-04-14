@@ -9,11 +9,13 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.util.Log;
 import android.view.MenuItem;
 
+import com.example.l8411.wut2eat29.Fragment.FriendListFragment;
 import com.example.l8411.wut2eat29.R;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -28,6 +30,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private FragmentManager fragmentManager;
     private SupportMapFragment mMapFragment;
     private SupportMapFragment mMapFragment2;
+    private Fragment mFriendFragment;
     private boolean justforfun;
 
     @Override
@@ -66,10 +69,11 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                     return true;
                 case R.id.navigation_dashboard:
                     //This part is just for test my learning of switching fragments
-                    mMapFragment2 = SupportMapFragment.newInstance();
-                    fragmentManager.beginTransaction().replace(R.id.container, mMapFragment2).commit();
-                    justforfun = false;
-                    mMapFragment2.getMapAsync(MapsActivity.this);
+                    //mMapFragment2 = SupportMapFragment.newInstance();
+                    mFriendFragment = new FriendListFragment();
+                    fragmentManager.beginTransaction().replace(R.id.container, mFriendFragment).commit();
+                    //justforfun = false;
+                    //mMapFragment2.getMapAsync(MapsActivity.this);
                     return true;
                 case R.id.navigation_notifications:
 
