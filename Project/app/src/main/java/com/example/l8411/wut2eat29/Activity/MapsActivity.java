@@ -12,12 +12,16 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.view.PagerAdapter;
+import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.ViewParent;
 
+import com.example.l8411.wut2eat29.Adapter.NavigationPagerAdapter;
 import com.example.l8411.wut2eat29.Fragment.FriendListFragment;
 import com.example.l8411.wut2eat29.Fragment.ProfileFragment;
 import com.example.l8411.wut2eat29.Model.UserProfile;
@@ -38,6 +42,8 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     private SupportMapFragment mMapFragment;
     private ProfileFragment mProfileFragmet;
     private Fragment mFriendFragment;
+    private NavigationPagerAdapter navigationPagerAdapter;
+    private ViewPager viewPager;
 
 
     @Override
@@ -45,15 +51,18 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_maps);
         fragmentManager = getSupportFragmentManager();
+        navigationPagerAdapter = new NavigationPagerAdapter(fragmentManager);
+        viewPager = this.findViewById(R.id.container);
+        viewPager.setAdapter(navigationPagerAdapter);
 
-        // Obtain the SupportMapFragment and get notified when the map is ready to be used.
-        mMapFragment = SupportMapFragment.newInstance();
+
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(MapsActivity.this,
                     new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
                     1);
+
         } else {
-            fragmentManager.beginTransaction().add(R.id.container, mMapFragment).commit();
+            mMapFragment = (SupportMapFragment) navigationPagerAdapter.getItem(0);
             mMapFragment.getMapAsync(this);
         }
 
@@ -74,22 +83,26 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         @Override
         public boolean onNavigationItemSelected(@NonNull MenuItem item) {
             switch (item.getItemId()) {
-                case R.id.navigation_home:
-                    fragmentManager.beginTransaction().replace(R.id.container, mMapFragment).commit();
+                case R.id.navigation_map:
+                    mMapFragment = (SupportMapFragment) navigationPagerAdapter.getItem(0);
                     mMapFragment.getMapAsync(MapsActivity.this);
+                    viewPager.setCurrentItem(0);
+//                    mMapFragment.getMapAsync(MapsActivity.this);
                     return true;
-                case R.id.navigation_dashboard:
+                case R.id.navigation_friend:
                     //This part is just for test my learning of switching fragments
                     //mMapFragment2 = SupportMapFragment.newInstance();
-                    mFriendFragment = new FriendListFragment();
-                    fragmentManager.beginTransaction().replace(R.id.container, mFriendFragment).commit();
+//                    mFriendFragment = new FriendListFragment();
+//                    fragmentManager.beginTransaction().replace(R.id.container, mFriendFragment).commit();
                     //justforfun = false;
                     //mMapFragment2.getMapAsync(MapsActivity.this);
+                    viewPager.setCurrentItem(1);
                     return true;
-                case R.id.navigation_notifications:
-                    String[] top3 = {"Aa", "Bb", "Cc"};
-                    mProfileFragmet = mProfileFragmet.newInstance(new UserProfile(001,top3, new ArrayList<String>(), new ArrayList<String>()));
-                    fragmentManager.beginTransaction().replace(R.id.container,mProfileFragmet).commit();
+                case R.id.navigation_profile:
+//                    String[] top3 = {"Aa", "Bb", "Cc"};
+//                    mProfileFragmet = mProfileFragmet.newInstance(new UserProfile(001,top3, new ArrayList<String>(), new ArrayList<String>()));
+//                    fragmentManager.beginTransaction().replace(R.id.container,mProfileFragmet).commit();
+                    viewPager.setCurrentItem(2);
                     return true;
             }
             return false;
@@ -166,5 +179,19 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+
+        if(requestCode == 1){
+            if(grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED){
+                mMapFragment = (SupportMapFragment) navigationPagerAdapter.getItem(0);
+                mMapFragment.getMapAsync(this);
+            }else{
+                finish();
+                System.exit(0);
+            }
+        }
     }
 }
