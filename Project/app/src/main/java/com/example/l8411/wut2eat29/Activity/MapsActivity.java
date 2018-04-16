@@ -134,7 +134,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
         } else {
             Log.d("emmmm", "wtf");
-            Location location = lm.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+            Location location = lm.getLastKnownLocation(LocationManager.PASSIVE_PROVIDER);
             Lat = location.getLatitude();
             log = location.getLongitude();
             Log.d("in", "no in 2");
