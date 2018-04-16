@@ -4,10 +4,13 @@ import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
 import android.app.Fragment;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.example.l8411.wut2eat29.Adapter.FriendsAdapter;
 import com.example.l8411.wut2eat29.R;
 
 
@@ -28,7 +31,8 @@ public class FriendListFragment extends android.support.v4.app.Fragment {
     // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
-
+    private FriendsAdapter mFriendsAdapter;
+    private View friendNameView;
     private OnFragmentInteractionListener mListener;
 
     public FriendListFragment() {
@@ -58,13 +62,20 @@ public class FriendListFragment extends android.support.v4.app.Fragment {
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
+
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_friend_list, container, false);
+        View friendNameView =inflater.inflate(R.layout.fragment_friend_list, container, false);
+        RecyclerView recyclerView = (RecyclerView) friendNameView.findViewById(R.id.recycler_view) ;
+        recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+        recyclerView.setHasFixedSize(true);
+        mFriendsAdapter = new FriendsAdapter(getActivity(),recyclerView);
+        recyclerView.setAdapter(mFriendsAdapter);
+        return friendNameView;
     }
 
     // TODO: Rename method, update argument and hook method into UI event
