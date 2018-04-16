@@ -22,4 +22,6 @@
     <string name="view_history">View History</string>
     <string name="view_votes">View Votes</string>
     <string name="title">WUT2EAT29</string>
+    <string name="search_place_hint">Search Place</string>
+    <string name="search">Search</string>
 </resources>

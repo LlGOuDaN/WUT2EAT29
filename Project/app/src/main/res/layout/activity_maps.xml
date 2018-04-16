@@ -9,16 +9,33 @@ android:layout_height="match_parent">
     <android.support.v4.view.ViewPager
         android:id="@+id/container"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         app:layout_behavior="@string/appbar_scrolling_view_behavior" >
 
-        <android.support.v4.view.PagerTitleStrip
-            android:id="@+id/pager_title_strip"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            />
     </android.support.v4.view.ViewPager>
 
+    <android.support.v7.widget.SearchView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/colorWhite">
+
+    </android.support.v7.widget.SearchView>
+
+    <!--<EditText-->
+        <!--android:id="@+id/search_place_edit_text"-->
+        <!--android:layout_width="299dp"-->
+        <!--android:layout_height="42dp"-->
+        <!--android:layout_gravity="top"-->
+        <!--android:text="123123"-->
+
+        <!--android:hint="@string/search_place_hint" />-->
+
+    <!--<Button-->
+        <!--android:id="@+id/search_button"-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="35dp"-->
+        <!--android:layout_gravity="right"-->
+        <!--android:text="@string/search"/>-->
 
     <android.support.design.widget.BottomNavigationView
         android:id="@+id/navigation"

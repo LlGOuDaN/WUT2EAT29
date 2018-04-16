@@ -24,6 +24,7 @@ import android.view.ViewParent;
 import com.example.l8411.wut2eat29.Adapter.NavigationPagerAdapter;
 import com.example.l8411.wut2eat29.Fragment.FriendListFragment;
 import com.example.l8411.wut2eat29.Fragment.ProfileFragment;
+import com.example.l8411.wut2eat29.GooglePlaces.GetNearbyPlacesData;
 import com.example.l8411.wut2eat29.Model.UserProfile;
 import com.example.l8411.wut2eat29.R;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -121,6 +122,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
+        String keyword;
 
         // Add a marker in Sydney and move the camera
 
@@ -146,7 +148,21 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         mMap.addMarker(new MarkerOptions().position(mPosition).title("Marker my position"));
         mMap.moveCamera(CameraUpdateFactory.newLatLng(mPosition));
 
+        String url = gerUrl(Lat, log, "restaurant");
+        Object dataTransfer[] = {googleMap, url};
+        GetNearbyPlacesData getNearbyPlacesData = new GetNearbyPlacesData();
+        getNearbyPlacesData.execute(dataTransfer);
 
+
+    }
+
+    private String gerUrl(double lat, double log, String keyword) {
+        StringBuilder sb = new StringBuilder("https://maps.googleapis.com/maps/api/place/nearbysearch/json?");
+        sb.append("location=" + lat + "," + log);
+        sb.append("&radius=10000");
+        sb.append("&keyword=" + keyword);
+        sb.append("&key=AIzaSyB9YgxMfphQ23EW4PsHm1YFBCaDZZCGuPY");
+        return sb.toString();
     }
 
     @Override
