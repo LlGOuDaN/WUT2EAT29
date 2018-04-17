@@ -24,4 +24,6 @@
     <string name="title">WUT2EAT29</string>
     <string name="search_place_hint">Search Place</string>
     <string name="search">Search</string>
+    <string name="user_id">User ID</string>
+    <string name="send_invitation">Send Invitation</string>
 </resources>

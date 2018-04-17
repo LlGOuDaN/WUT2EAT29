@@ -176,6 +176,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         int id = item.getItemId();
 
         if (id == R.id.action_addContact) {
+            viewPager.setCurrentItem(3);
 
             return true;
         }
