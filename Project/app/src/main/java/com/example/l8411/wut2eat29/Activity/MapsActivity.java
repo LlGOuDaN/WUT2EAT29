@@ -187,7 +187,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         }
 
         if (id == R.id.action_Invitation) {
-
+            viewPager.setCurrentItem(4);
             return true;
         }
 
