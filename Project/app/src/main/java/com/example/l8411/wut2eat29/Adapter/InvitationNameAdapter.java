@@ -24,7 +24,7 @@ public class InvitationNameAdapter extends RecyclerView.Adapter<InvitationNameAd
     public InvitationNameAdapter(Context context, RecyclerView RV) {
         mRecyclerView = RV;
         mContext = context;
-        for (int i = 0; i < 10; i++) {
+        for (int i = 0; i < 2; i++) {
             mNames.add(getRandomName());
 
         }
@@ -56,7 +56,7 @@ public class InvitationNameAdapter extends RecyclerView.Adapter<InvitationNameAd
     @Override
     public void onBindViewHolder(InvitationNameAdapter.ViewHolder holder, int position) {
         String name = mNames.get(position);
-        holder.nameTextView.setText(name);
+        holder.nameTextView.setText(String.format("%s send you an invitation",name));
     }
 
 
