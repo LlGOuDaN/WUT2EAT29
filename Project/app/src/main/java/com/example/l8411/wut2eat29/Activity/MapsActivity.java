@@ -20,6 +20,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 
 import com.example.l8411.wut2eat29.Adapter.NavigationPagerAdapter;
 
@@ -62,7 +63,6 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         viewPager = this.findViewById(R.id.container);
         viewPager.setAdapter(navigationPagerAdapter);
         viewPager.addOnPageChangeListener(this);
-        viewPager.setOffscreenPageLimit(3);
 
 
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
@@ -169,30 +169,32 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
+//        viewPager.setVisibility(View.GONE);
 
         if (id == R.id.action_addContact) {
 
-//            mAddContactFragment = AddContactFragment.newInstance();
-//            fragmentManager.beginTransaction().replace(R.id.container, mAddContactFragment).commit();
-
-            viewPager.setCurrentItem(5);
-
+            mAddContactFragment =new AddContactFragment();
+            FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+            ft.add(R.id.fragment_container, mAddContactFragment).commit();
+            ft.addToBackStack("AddContact");
 
             return true;
         }
 
         if (id == R.id.action_startVote) {
-//            mStartAVoteFragment = StartAVoteFragment.newInstance();
-//            fragmentManager.beginTransaction().replace(R.id.container, mStartAVoteFragment).commit();
-            viewPager.setCurrentItem(4);
+            mStartAVoteFragment =new StartAVoteFragment();
+            FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+            ft.add(R.id.fragment_container, mStartAVoteFragment).commit();
+            ft.addToBackStack("StartAVote");
             return true;
         }
 
         if (id == R.id.action_Invitation) {
-//            mInvitationFragment =new InvitationFragment();
-//            FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-//            ft.add(R.id.container, mInvitationFragment).commit();
-            viewPager.setCurrentItem(3);
+            mInvitationFragment =new InvitationFragment();
+            FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+            ft.add(R.id.fragment_container, mInvitationFragment).commit();
+            ft.addToBackStack("Invitation");
+//            viewPager.setCurrentItem(3);
 
             return true;
         }

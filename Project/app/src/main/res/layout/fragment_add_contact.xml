@@ -3,7 +3,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    tools:context="com.example.l8411.wut2eat29.Fragment.AddContactFragment">
+    tools:context="com.example.l8411.wut2eat29.Fragment.AddContactFragment"
+    android:background="@color/colorWhite">
 
     <!-- TODO: Update blank fragment layout -->
 
