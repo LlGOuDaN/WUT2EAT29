@@ -32,6 +32,8 @@ public class NavigationPagerAdapter extends FragmentPagerAdapter {
         String[] top3 = {"Aa", "Bb", "Cc"};
         mList.add(ProfileFragment.newInstance(new UserProfile(001,top3, new ArrayList<String>(), new ArrayList<String>())));
         mList.add(InvitationFragment.newInstance());
+        mList.add(StartAVoteFragment.newInstance());
+        mList.add(AddContactFragment.newInstance());
     }
 
 

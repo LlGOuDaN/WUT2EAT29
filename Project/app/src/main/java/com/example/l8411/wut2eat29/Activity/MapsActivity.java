@@ -11,11 +11,10 @@ import android.support.design.widget.BottomNavigationView;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
-<<<<<<< HEAD
+
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.PagerAdapter;
-=======
->>>>>>> e704c2b302b9d4eeb018b3312b84bdb6ace43ccc
+
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -23,12 +22,11 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 import com.example.l8411.wut2eat29.Adapter.NavigationPagerAdapter;
-<<<<<<< HEAD
+
 import com.example.l8411.wut2eat29.Fragment.AddContactFragment;
 import com.example.l8411.wut2eat29.Fragment.FriendListFragment;
 import com.example.l8411.wut2eat29.Fragment.InvitationFragment;
-=======
->>>>>>> e704c2b302b9d4eeb018b3312b84bdb6ace43ccc
+
 import com.example.l8411.wut2eat29.Fragment.ProfileFragment;
 import com.example.l8411.wut2eat29.Fragment.StartAVoteFragment;
 import com.example.l8411.wut2eat29.GooglePlaces.GetNearbyPlacesData;
@@ -64,6 +62,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         viewPager = this.findViewById(R.id.container);
         viewPager.setAdapter(navigationPagerAdapter);
         viewPager.addOnPageChangeListener(this);
+        viewPager.setOffscreenPageLimit(3);
 
 
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
@@ -172,28 +171,28 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         int id = item.getItemId();
 
         if (id == R.id.action_addContact) {
-<<<<<<< HEAD
-            mAddContactFragment = AddContactFragment.newInstance();
-            fragmentManager.beginTransaction().replace(R.id.container, mAddContactFragment).commit();
 
-=======
-            viewPager.setCurrentItem(3);
->>>>>>> e704c2b302b9d4eeb018b3312b84bdb6ace43ccc
+//            mAddContactFragment = AddContactFragment.newInstance();
+//            fragmentManager.beginTransaction().replace(R.id.container, mAddContactFragment).commit();
+
+            viewPager.setCurrentItem(5);
+
+
             return true;
         }
 
         if (id == R.id.action_startVote) {
-            mStartAVoteFragment = StartAVoteFragment.newInstance();
-            fragmentManager.beginTransaction().replace(R.id.container, mStartAVoteFragment).commit();
+//            mStartAVoteFragment = StartAVoteFragment.newInstance();
+//            fragmentManager.beginTransaction().replace(R.id.container, mStartAVoteFragment).commit();
+            viewPager.setCurrentItem(4);
             return true;
         }
 
         if (id == R.id.action_Invitation) {
-            mInvitationFragment =new InvitationFragment();
-            FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-            ft.add(R.id.container, mInvitationFragment).commit();
-            
-//            viewPager.setCurrentItem(3);
+//            mInvitationFragment =new InvitationFragment();
+//            FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+//            ft.add(R.id.container, mInvitationFragment).commit();
+            viewPager.setCurrentItem(3);
 
             return true;
         }
@@ -227,11 +226,12 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
     @Override
     public void onPageSelected(int position) {
-        navigationView.setSelectedItemId(navigationView.getMenu().getItem(position).getItemId());
+        if(position < 3){
+            navigationView.setSelectedItemId(navigationView.getMenu().getItem(position).getItemId());
+        }
     }
 
     @Override
     public void onPageScrollStateChanged(int state) {
-
     }
 }
