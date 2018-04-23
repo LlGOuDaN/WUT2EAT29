@@ -10,26 +10,28 @@ import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
+<<<<<<< HEAD
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.PagerAdapter;
+=======
+>>>>>>> e704c2b302b9d4eeb018b3312b84bdb6ace43ccc
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.ViewParent;
 
 import com.example.l8411.wut2eat29.Adapter.NavigationPagerAdapter;
+<<<<<<< HEAD
 import com.example.l8411.wut2eat29.Fragment.AddContactFragment;
 import com.example.l8411.wut2eat29.Fragment.FriendListFragment;
 import com.example.l8411.wut2eat29.Fragment.InvitationFragment;
+=======
+>>>>>>> e704c2b302b9d4eeb018b3312b84bdb6ace43ccc
 import com.example.l8411.wut2eat29.Fragment.ProfileFragment;
 import com.example.l8411.wut2eat29.Fragment.StartAVoteFragment;
 import com.example.l8411.wut2eat29.GooglePlaces.GetNearbyPlacesData;
-import com.example.l8411.wut2eat29.Model.UserProfile;
 import com.example.l8411.wut2eat29.R;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -38,9 +40,7 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 
-import java.util.ArrayList;
-
-public class MapsActivity extends AppCompatActivity implements OnMapReadyCallback {
+public class MapsActivity extends AppCompatActivity implements OnMapReadyCallback, ViewPager.OnPageChangeListener {
 
     private GoogleMap mMap;
     private FragmentManager fragmentManager;
@@ -52,6 +52,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     private Fragment mFriendFragment;
     private NavigationPagerAdapter navigationPagerAdapter;
     private ViewPager viewPager;
+    private BottomNavigationView navigationView;
 
 
     @Override
@@ -62,6 +63,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         navigationPagerAdapter = new NavigationPagerAdapter(fragmentManager);
         viewPager = this.findViewById(R.id.container);
         viewPager.setAdapter(navigationPagerAdapter);
+        viewPager.addOnPageChangeListener(this);
 
 
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
@@ -75,12 +77,9 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         }
 
 
-//        TODO: add and create other fragments
-//        friendListFragment = FriendListFragment.newInstance("asd","qwd");
-
 
         //enable BottomNavigationView here
-        BottomNavigationView navigationView = findViewById(R.id.navigation);
+        navigationView = findViewById(R.id.navigation);
         navigationView.setOnNavigationItemSelectedListener(this.mOnNavigationItemSelectedListener);
     }
 
@@ -95,21 +94,11 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                     mMapFragment = (SupportMapFragment) navigationPagerAdapter.getItem(0);
                     mMapFragment.getMapAsync(MapsActivity.this);
                     viewPager.setCurrentItem(0);
-//                    mMapFragment.getMapAsync(MapsActivity.this);
                     return true;
                 case R.id.navigation_friend:
-                    //This part is just for test my learning of switching fragments
-                    //mMapFragment2 = SupportMapFragment.newInstance();
-//                    mFriendFragment = new FriendListFragment();
-//                    fragmentManager.beginTransaction().replace(R.id.container, mFriendFragment).commit();
-                    //justforfun = false;
-                    //mMapFragment2.getMapAsync(MapsActivity.this);
                     viewPager.setCurrentItem(1);
                     return true;
                 case R.id.navigation_profile:
-//                    String[] top3 = {"Aa", "Bb", "Cc"};
-//                    mProfileFragmet = mProfileFragmet.newInstance(new UserProfile(001,top3, new ArrayList<String>(), new ArrayList<String>()));
-//                    fragmentManager.beginTransaction().replace(R.id.container,mProfileFragmet).commit();
                     viewPager.setCurrentItem(2);
                     return true;
             }
@@ -183,9 +172,13 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         int id = item.getItemId();
 
         if (id == R.id.action_addContact) {
+<<<<<<< HEAD
             mAddContactFragment = AddContactFragment.newInstance();
             fragmentManager.beginTransaction().replace(R.id.container, mAddContactFragment).commit();
 
+=======
+            viewPager.setCurrentItem(3);
+>>>>>>> e704c2b302b9d4eeb018b3312b84bdb6ace43ccc
             return true;
         }
 
@@ -224,5 +217,21 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                 System.exit(0);
             }
         }
+    }
+
+    //pager change listener
+    @Override
+    public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+
+    }
+
+    @Override
+    public void onPageSelected(int position) {
+        navigationView.setSelectedItemId(navigationView.getMenu().getItem(position).getItemId());
+    }
+
+    @Override
+    public void onPageScrollStateChanged(int state) {
+
     }
 }
