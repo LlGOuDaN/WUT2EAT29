@@ -2,7 +2,6 @@ package com.example.l8411.wut2eat29.Adapter;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,19 +16,18 @@ import java.util.Random;
  * Created by chenj11 on 3/23/2018.
  */
 
-public class InvitationNameAdapter extends RecyclerView.Adapter<InvitationNameAdapter.ViewHolder> {
+public class StartAVoteAdapter extends RecyclerView.Adapter<StartAVoteAdapter.ViewHolder> {
     private Context mContext;
     private RecyclerView mRecyclerView;
     final ArrayList<String> mNames = new ArrayList<>();
     private Random mRandom = new Random();
-    public InvitationNameAdapter(Context context, RecyclerView RV) {
+    public StartAVoteAdapter(Context context, RecyclerView RV) {
         mRecyclerView = RV;
         mContext = context;
         for (int i = 0; i < 2; i++) {
             mNames.add(getRandomName());
 
         }
-        Log.d("WTE","The invitation name adapter is created");
     }
 
 
@@ -50,15 +48,15 @@ public class InvitationNameAdapter extends RecyclerView.Adapter<InvitationNameAd
 
 
     @Override
-    public InvitationNameAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View itemView = LayoutInflater.from(parent.getContext()).inflate(R.layout.invitation_view,parent,false);
+    public StartAVoteAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        View itemView = LayoutInflater.from(parent.getContext()).inflate(R.layout.start_avote_view,parent,false);
         return new ViewHolder(itemView);
     }
 
     @Override
-    public void onBindViewHolder(InvitationNameAdapter.ViewHolder holder, int position) {
+    public void onBindViewHolder(StartAVoteAdapter.ViewHolder holder, int position) {
         String name = mNames.get(position);
-        holder.nameTextView.setText(String.format("%s send you an invitation",name));
+        holder.nameTextView.setText(name);
     }
 
 
@@ -70,16 +68,32 @@ public class InvitationNameAdapter extends RecyclerView.Adapter<InvitationNameAd
 
 
 
+    public void addName(){
+        mNames.add(0,getRandomName());
+        notifyItemInserted(0);
+        mRecyclerView.getLayoutManager().scrollToPosition(0);
 
 
+    }
+    public void deleteName(int position) {
+        mNames.remove(position);
+
+        notifyItemRemoved(position);
+    }
 
     public class ViewHolder extends RecyclerView.ViewHolder{
         TextView nameTextView;
 
         public ViewHolder(View view){
             super(view);
-
-            nameTextView = (TextView) view.findViewById(R.id.Iname_view);
+            view.setOnLongClickListener(new View.OnLongClickListener() {
+                @Override
+                public boolean onLongClick(View view) {
+                    deleteName(getAdapterPosition());
+                    return false;
+                }
+            });
+            nameTextView = (TextView) view.findViewById(R.id.Sname_view);
 
         }
     }

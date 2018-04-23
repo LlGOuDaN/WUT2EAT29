@@ -12,6 +12,7 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
@@ -22,8 +23,11 @@ import android.view.MenuItem;
 import android.view.ViewParent;
 
 import com.example.l8411.wut2eat29.Adapter.NavigationPagerAdapter;
+import com.example.l8411.wut2eat29.Fragment.AddContactFragment;
 import com.example.l8411.wut2eat29.Fragment.FriendListFragment;
+import com.example.l8411.wut2eat29.Fragment.InvitationFragment;
 import com.example.l8411.wut2eat29.Fragment.ProfileFragment;
+import com.example.l8411.wut2eat29.Fragment.StartAVoteFragment;
 import com.example.l8411.wut2eat29.GooglePlaces.GetNearbyPlacesData;
 import com.example.l8411.wut2eat29.Model.UserProfile;
 import com.example.l8411.wut2eat29.R;
@@ -42,6 +46,9 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     private FragmentManager fragmentManager;
     private SupportMapFragment mMapFragment;
     private ProfileFragment mProfileFragmet;
+    private Fragment mAddContactFragment;
+    private Fragment mStartAVoteFragment;
+    private Fragment mInvitationFragment;
     private Fragment mFriendFragment;
     private NavigationPagerAdapter navigationPagerAdapter;
     private ViewPager viewPager;
@@ -176,18 +183,25 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         int id = item.getItemId();
 
         if (id == R.id.action_addContact) {
-            viewPager.setCurrentItem(3);
+            mAddContactFragment = AddContactFragment.newInstance();
+            fragmentManager.beginTransaction().replace(R.id.container, mAddContactFragment).commit();
 
             return true;
         }
 
         if (id == R.id.action_startVote) {
-
+            mStartAVoteFragment = StartAVoteFragment.newInstance();
+            fragmentManager.beginTransaction().replace(R.id.container, mStartAVoteFragment).commit();
             return true;
         }
 
         if (id == R.id.action_Invitation) {
-            viewPager.setCurrentItem(4);
+            mInvitationFragment =new InvitationFragment();
+            FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+            ft.add(R.id.container, mInvitationFragment).commit();
+            
+//            viewPager.setCurrentItem(3);
+
             return true;
         }
 
