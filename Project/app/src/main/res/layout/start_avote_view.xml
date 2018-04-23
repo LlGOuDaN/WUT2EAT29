@@ -31,7 +31,8 @@
             android:layout_alignParentEnd="true"
             android:layout_centerVertical="true"
             android:layout_marginEnd="63dp"
-            app:srcCompat="@android:drawable/checkbox_off_background" />
+            app:srcCompat="@android:drawable/checkbox_off_background"
+            android:background="@null"/>
 
 
     </RelativeLayout>
