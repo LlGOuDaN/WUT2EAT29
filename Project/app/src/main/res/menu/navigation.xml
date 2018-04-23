@@ -9,7 +9,8 @@
     <item
         android:id="@+id/navigation_friend"
         android:icon="@drawable/ic_people_black_24dp"
-        android:title="@string/friends" />
+        android:title="@string/friends"
+        />
 
     <item
         android:id="@+id/navigation_profile"
