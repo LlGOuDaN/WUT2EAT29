@@ -18,6 +18,7 @@ import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -51,13 +52,15 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     private Fragment mFriendFragment;
     private NavigationPagerAdapter navigationPagerAdapter;
     private ViewPager viewPager;
-    private BottomNavigationView navigationView;
+    public BottomNavigationView navigationView;
+    private String previousFrag;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_maps);
+        previousFrag = "";
         fragmentManager = getSupportFragmentManager();
         navigationPagerAdapter = new NavigationPagerAdapter(fragmentManager);
         viewPager = this.findViewById(R.id.container);
@@ -169,33 +172,39 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
+        FragmentManager fm = this.getSupportFragmentManager();
 //        viewPager.setVisibility(View.GONE);
 
         if (id == R.id.action_addContact) {
-
-            mAddContactFragment =new AddContactFragment();
+            mAddContactFragment = AddContactFragment.newInstance();
             FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+            fm.popBackStack(previousFrag, FragmentManager.POP_BACK_STACK_INCLUSIVE);
             ft.add(R.id.fragment_container, mAddContactFragment).commit();
             ft.addToBackStack("AddContact");
-
+            previousFrag = "AddContact";
+            navigationView.setVisibility(View.GONE);
             return true;
         }
 
         if (id == R.id.action_startVote) {
             mStartAVoteFragment =new StartAVoteFragment();
             FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+            fm.popBackStack(previousFrag, FragmentManager.POP_BACK_STACK_INCLUSIVE);
             ft.add(R.id.fragment_container, mStartAVoteFragment).commit();
             ft.addToBackStack("StartAVote");
+            previousFrag = "StartAVote";
+            navigationView.setVisibility(View.GONE);
             return true;
         }
 
         if (id == R.id.action_Invitation) {
             mInvitationFragment =new InvitationFragment();
             FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+            fm.popBackStack(previousFrag,FragmentManager.POP_BACK_STACK_INCLUSIVE);
             ft.add(R.id.fragment_container, mInvitationFragment).commit();
             ft.addToBackStack("Invitation");
-//            viewPager.setCurrentItem(3);
-
+            previousFrag = "Invitation";
+            navigationView.setVisibility(View.GONE);
             return true;
         }
 
@@ -203,6 +212,8 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
             return true;
         }
+        Log.d("back", "back");
+
         return super.onOptionsItemSelected(item);
     }
 
