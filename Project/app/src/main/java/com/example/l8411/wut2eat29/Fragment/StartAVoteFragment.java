@@ -4,12 +4,16 @@ import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
 import android.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.example.l8411.wut2eat29.Activity.MapsActivity;
 import com.example.l8411.wut2eat29.Adapter.InvitationNameAdapter;
 import com.example.l8411.wut2eat29.Adapter.StartAVoteAdapter;
 import com.example.l8411.wut2eat29.R;
@@ -23,7 +27,7 @@ import com.example.l8411.wut2eat29.R;
  * Use the {@link StartAVoteFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class StartAVoteFragment extends android.support.v4.app.Fragment {
+public class StartAVoteFragment extends android.support.v4.app.Fragment implements View.OnKeyListener {
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
@@ -76,6 +80,9 @@ public class StartAVoteFragment extends android.support.v4.app.Fragment {
         recyclerView.setHasFixedSize(true);
         mStartAVoteAdapter = new StartAVoteAdapter(getActivity(),recyclerView);
         recyclerView.setAdapter(mStartAVoteAdapter);
+        recyclerView.setFocusableInTouchMode(true);
+        recyclerView.requestFocus();
+        recyclerView.setOnKeyListener(this);
         return StartAVoteView;
     }
 
@@ -101,6 +108,19 @@ public class StartAVoteFragment extends android.support.v4.app.Fragment {
     public void onDetach() {
         super.onDetach();
         mListener = null;
+    }
+
+    @Override
+    public boolean onKey(View view, int i, KeyEvent keyEvent) {
+        if (i == KeyEvent.KEYCODE_BACK) {
+            Log.d("back", "back click");
+            MapsActivity main = (MapsActivity) getContext();
+            main.navigationView.setVisibility(View.VISIBLE);
+            getFragmentManager().popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
+            return true;
+        }
+        Log.d("back", "back click");
+        return false;
     }
 
     /**

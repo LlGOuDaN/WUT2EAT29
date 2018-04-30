@@ -4,10 +4,14 @@ import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
 import android.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.util.Log;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.example.l8411.wut2eat29.Activity.MapsActivity;
 import com.example.l8411.wut2eat29.R;
 
 /**
@@ -18,7 +22,7 @@ import com.example.l8411.wut2eat29.R;
  * Use the {@link AddContactFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class AddContactFragment extends android.support.v4.app.Fragment {
+public class AddContactFragment extends android.support.v4.app.Fragment implements View.OnKeyListener {
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
@@ -63,8 +67,26 @@ public class AddContactFragment extends android.support.v4.app.Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_add_contact, container, false);
+        View view = inflater.inflate(R.layout.fragment_add_contact, container, false);
+        view.setFocusableInTouchMode(true);
+        view.requestFocus();
+        view.setOnKeyListener(this);
+        return view;
     }
+
+    @Override
+    public boolean onKey(View view, int i, KeyEvent keyEvent) {
+        if (i == KeyEvent.KEYCODE_BACK) {
+            Log.d("back", "back click");
+            MapsActivity main = (MapsActivity) getContext();
+            main.navigationView.setVisibility(View.VISIBLE);
+            getFragmentManager().popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
+            return true;
+        }
+        Log.d("back", "back click");
+        return false;
+    }
+
 
     // TODO: Rename method, update argument and hook method into UI event
 //    public void onButtonPressed(Uri uri) {
