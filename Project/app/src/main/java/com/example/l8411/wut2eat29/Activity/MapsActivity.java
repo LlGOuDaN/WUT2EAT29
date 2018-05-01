@@ -2,10 +2,12 @@ package com.example.l8411.wut2eat29.Activity;
 
 import android.Manifest;
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
 import android.support.v4.app.ActivityCompat;
@@ -39,6 +41,8 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
+
+import java.util.Set;
 
 public class MapsActivity extends AppCompatActivity implements OnMapReadyCallback, ViewPager.OnPageChangeListener {
 
@@ -216,7 +220,8 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         }
 
         if (id == R.id.action_Setting) {
-
+            Intent intent = new Intent(MapsActivity.this, SettingsActivity.class);
+            startActivity(intent);
             return true;
         }
         Log.d("back", "back");
