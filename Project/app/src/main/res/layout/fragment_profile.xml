@@ -140,14 +140,14 @@
                 android:background="@color/gap" />
 
             <TextView
-                android:id="@+id/log_out"
+                android:id="@+id/setting"
                 android:layout_width="fill_parent"
                 android:layout_height="50dp"
                 android:drawablePadding="10dp"
                 android:gravity="center_vertical"
                 android:paddingLeft="16dp"
                 android:paddingRight="16dp"
-                android:text="@string/logout"
+                android:text="@string/setting"
                 android:textSize="16sp"
                 android:background="@color/colorWhite"/>
 
