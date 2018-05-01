@@ -87,8 +87,11 @@ public class InvitationFragment extends Fragment implements View.OnKeyListener {
         if (i == KeyEvent.KEYCODE_BACK) {
             Log.d("back", "back click");
             MapsActivity main = (MapsActivity) getContext();
+            getFragmentManager().popBackStack("Invitation", FragmentManager.POP_BACK_STACK_INCLUSIVE);
             main.navigationView.setVisibility(View.VISIBLE);
-            getFragmentManager().popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
+            if (main.viewPager.getCurrentItem() == 0) {
+                main.findViewById(R.id.search_view).setVisibility(View.VISIBLE);
+            }
             return true;
         }
         Log.d("back", "back click");
