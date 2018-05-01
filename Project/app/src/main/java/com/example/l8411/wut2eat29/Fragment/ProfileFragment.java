@@ -1,27 +1,25 @@
 package com.example.l8411.wut2eat29.Fragment;
 
+
 import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
 import android.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.example.l8411.wut2eat29.Activity.LoginActivity;
+import com.example.l8411.wut2eat29.Activity.MapsActivity;
 import com.example.l8411.wut2eat29.Model.UserProfile;
 import com.example.l8411.wut2eat29.R;
 
 
-/**
- * A simple {@link Fragment} subclass.
- * Activities that contain this fragment must implement the
- * {@link ProfileFragment.OnFragmentInteractionListener} interface
- * to handle interaction events.
- * Use the {@link ProfileFragment#newInstance} factory method to
- * create an instance of this fragment.
- */
-public class ProfileFragment extends android.support.v4.app.Fragment {
+public class ProfileFragment extends android.support.v4.app.Fragment implements View.OnClickListener{
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PROFILE = "profile";
@@ -33,6 +31,9 @@ public class ProfileFragment extends android.support.v4.app.Fragment {
     private TextView mTopBChoice;
     private TextView mTopCChoice;
     private String[] top3Choices;
+    private TextView mViewHistory;
+    private TextView mViewVotes;
+    private TextView mLogout;
 
 
     public ProfileFragment() {
@@ -63,17 +64,45 @@ public class ProfileFragment extends android.support.v4.app.Fragment {
         mProfile = getArguments().getParcelable(ARG_PROFILE);
         top3Choices = mProfile.getTop3Choice();
         View rootView = inflater.inflate(R.layout.fragment_profile, container, false);
-        mUID = rootView.findViewById(R.id.IDView);
+        mUID = rootView.findViewById(R.id.UID);
         mTopAChoice = rootView.findViewById(R.id.topChoiceA);
         mTopBChoice = rootView.findViewById(R.id.topChoiceB);
         mTopCChoice = rootView.findViewById(R.id.topChoiceC);
+
+        mViewHistory = rootView.findViewById(R.id.view_history);
+        mViewVotes = rootView.findViewById(R.id.view_votes);
+        mLogout = rootView.findViewById(R.id.log_out);
 
 
         mUID.setText(mProfile.getUserID()+"");
         mTopAChoice.setText(top3Choices[0]);
         mTopBChoice.setText(top3Choices[1]);
         mTopCChoice.setText(top3Choices[2]);
+
+        mViewHistory.setOnClickListener(this);
+        mViewVotes.setOnClickListener(this);
+        mLogout.setOnClickListener(this);
         return rootView;
+    }
+
+    @Override
+    public void onClick(View view) {
+        FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
+        int id = view.getId();
+        if(id == R.id.view_history){
+            Log.d("History", "click");
+            ft.add(R.id.fragment_container, HistoryFragment.newInstance("1")).commit();
+            ft.addToBackStack("History");
+            return;
+        }
+        if(id == R.id.view_votes){
+            Log.d("Votes", "click");
+            return;
+        }
+        if(id == R.id.log_out){
+            Log.d("Logout", "logout");
+            return;
+        }
     }
 
     // TODO: Rename method, update argument and hook method into UI event

@@ -51,7 +51,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     private Fragment mInvitationFragment;
     private Fragment mFriendFragment;
     private NavigationPagerAdapter navigationPagerAdapter;
-    private ViewPager viewPager;
+    public ViewPager viewPager;
     public BottomNavigationView navigationView;
     private String previousFrag;
 
@@ -91,16 +91,20 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
         @Override
         public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+            fragmentManager.popBackStack();
             switch (item.getItemId()) {
                 case R.id.navigation_map:
                     mMapFragment = (SupportMapFragment) navigationPagerAdapter.getItem(0);
                     mMapFragment.getMapAsync(MapsActivity.this);
+                    MapsActivity.this.findViewById(R.id.search_view).setVisibility(View.VISIBLE);
                     viewPager.setCurrentItem(0);
                     return true;
                 case R.id.navigation_friend:
+                    MapsActivity.this.findViewById(R.id.search_view).setVisibility(View.GONE);
                     viewPager.setCurrentItem(1);
                     return true;
                 case R.id.navigation_profile:
+                    MapsActivity.this.findViewById(R.id.search_view).setVisibility(View.GONE);
                     viewPager.setCurrentItem(2);
                     return true;
             }
@@ -183,6 +187,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             ft.addToBackStack("AddContact");
             previousFrag = "AddContact";
             navigationView.setVisibility(View.GONE);
+            MapsActivity.this.findViewById(R.id.search_view).setVisibility(View.GONE);
             return true;
         }
 
@@ -194,6 +199,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             ft.addToBackStack("StartAVote");
             previousFrag = "StartAVote";
             navigationView.setVisibility(View.GONE);
+            MapsActivity.this.findViewById(R.id.search_view).setVisibility(View.GONE);
             return true;
         }
 
@@ -205,6 +211,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             ft.addToBackStack("Invitation");
             previousFrag = "Invitation";
             navigationView.setVisibility(View.GONE);
+            MapsActivity.this.findViewById(R.id.search_view).setVisibility(View.GONE);
             return true;
         }
 
