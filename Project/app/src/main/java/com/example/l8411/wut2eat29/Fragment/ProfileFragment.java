@@ -2,6 +2,7 @@ package com.example.l8411.wut2eat29.Fragment;
 
 
 import android.content.Context;
+import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.app.Fragment;
@@ -15,6 +16,7 @@ import android.widget.TextView;
 
 import com.example.l8411.wut2eat29.Activity.LoginActivity;
 import com.example.l8411.wut2eat29.Activity.MapsActivity;
+import com.example.l8411.wut2eat29.Activity.SettingsActivity;
 import com.example.l8411.wut2eat29.Model.UserProfile;
 import com.example.l8411.wut2eat29.R;
 
@@ -33,7 +35,7 @@ public class ProfileFragment extends android.support.v4.app.Fragment implements 
     private String[] top3Choices;
     private TextView mViewHistory;
     private TextView mViewVotes;
-    private TextView mLogout;
+    private TextView mSetting;
 
 
     public ProfileFragment() {
@@ -71,7 +73,7 @@ public class ProfileFragment extends android.support.v4.app.Fragment implements 
 
         mViewHistory = rootView.findViewById(R.id.view_history);
         mViewVotes = rootView.findViewById(R.id.view_votes);
-        mLogout = rootView.findViewById(R.id.log_out);
+        mSetting = rootView.findViewById(R.id.setting);
 
 
         mUID.setText(mProfile.getUserID()+"");
@@ -81,7 +83,7 @@ public class ProfileFragment extends android.support.v4.app.Fragment implements 
 
         mViewHistory.setOnClickListener(this);
         mViewVotes.setOnClickListener(this);
-        mLogout.setOnClickListener(this);
+        mSetting.setOnClickListener(this);
         return rootView;
     }
 
@@ -99,8 +101,10 @@ public class ProfileFragment extends android.support.v4.app.Fragment implements 
             Log.d("Votes", "click");
             return;
         }
-        if(id == R.id.log_out){
-            Log.d("Logout", "logout");
+        if(id == R.id.setting){
+            Log.d("Setting", "setting");
+            Intent intent = new Intent(getContext(), SettingsActivity.class);
+            startActivity(intent);
             return;
         }
     }

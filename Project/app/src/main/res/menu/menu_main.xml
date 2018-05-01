@@ -19,11 +19,5 @@
         android:title="@string/invitation"
         app:showAsAction="never"
         />
-    <item
-        android:id="@+id/action_Setting"
-        android:orderInCategory="100"
-        android:title="@string/setting"
-        app:showAsAction="never"
-        />
 
 </menu>

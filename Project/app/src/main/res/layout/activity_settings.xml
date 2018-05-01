@@ -4,49 +4,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-
+    android:id="@+id/SettingLayoutContainer"
     tools:context="com.example.l8411.wut2eat29.Activity.SettingsActivity">
 
-<RelativeLayout
-    android:id="@+id/SettingLayout"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent">
-    <TextView
-        android:id="@+id/textViewStatus"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentStart="true"
-        android:layout_below="@+id/textViewLanguage"
-        android:text="@string/status"
-        android:textSize="30sp"
-        android:padding="10dp"
-        android:background="@drawable/textview_border" />
 
-    <TextView
-        android:id="@+id/textViewLanguage"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentTop="true"
-        android:text="@string/language"
-        android:textSize="30sp"
-        android:padding="10dp"
-        android:background="@drawable/textview_border"
-        />
-
-    <TextView
-        android:id="@+id/textViewLogOut"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentStart="true"
-        android:layout_below="@+id/textViewStatus"
-        android:text="@string/log_out"
-        android:textSize="30sp"
-        android:padding="10dp"
-        android:background="@drawable/textview_border"/>
-</RelativeLayout>
-    <FrameLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:id="@+id/SettingLayoutContainer"/>
 </FrameLayout>
