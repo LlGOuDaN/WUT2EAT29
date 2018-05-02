@@ -47,4 +47,5 @@
     <string name="busy">Busy</string>
     <string name="not_disturb">Not Disturb</string>
     <string name="free">Free</string>
+    <string name="confirm">Confirm</string>
 </resources>

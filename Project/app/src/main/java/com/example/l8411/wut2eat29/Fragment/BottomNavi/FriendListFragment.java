@@ -1,6 +1,5 @@
-package com.example.l8411.wut2eat29.Fragment;
+package com.example.l8411.wut2eat29.Fragment.BottomNavi;
 
-import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
 import android.app.Fragment;

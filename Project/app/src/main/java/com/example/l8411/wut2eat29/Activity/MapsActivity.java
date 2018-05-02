@@ -2,12 +2,10 @@ package com.example.l8411.wut2eat29.Activity;
 
 import android.Manifest;
 import android.content.Context;
-import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.Bundle;
-import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
 import android.support.v4.app.ActivityCompat;
@@ -15,12 +13,10 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 
 import android.support.v4.app.FragmentTransaction;
-import android.support.v4.view.PagerAdapter;
 
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
-import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -28,10 +24,9 @@ import android.view.View;
 import com.example.l8411.wut2eat29.Adapter.NavigationPagerAdapter;
 
 import com.example.l8411.wut2eat29.Fragment.AddContactFragment;
-import com.example.l8411.wut2eat29.Fragment.FriendListFragment;
 import com.example.l8411.wut2eat29.Fragment.InvitationFragment;
 
-import com.example.l8411.wut2eat29.Fragment.ProfileFragment;
+import com.example.l8411.wut2eat29.Fragment.BottomNavi.ProfileFragment;
 import com.example.l8411.wut2eat29.Fragment.StartAVoteFragment;
 import com.example.l8411.wut2eat29.GooglePlaces.GetNearbyPlacesData;
 import com.example.l8411.wut2eat29.R;
@@ -41,8 +36,6 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
-
-import java.util.Set;
 
 public class MapsActivity extends AppCompatActivity implements OnMapReadyCallback, ViewPager.OnPageChangeListener {
 
@@ -184,7 +177,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 //        viewPager.setVisibility(View.GONE);
 
         if (id == R.id.action_addContact) {
-            mAddContactFragment = AddContactFragment.newInstance();
+            mAddContactFragment = new AddContactFragment();
             FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
             fm.popBackStack(previousFrag, FragmentManager.POP_BACK_STACK_INCLUSIVE);
             ft.add(R.id.fragment_container, mAddContactFragment).commit();
@@ -192,6 +185,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             previousFrag = "AddContact";
             navigationView.setVisibility(View.GONE);
             MapsActivity.this.findViewById(R.id.search_view).setVisibility(View.GONE);
+            viewPager.setVisibility(View.GONE);
             return true;
         }
 

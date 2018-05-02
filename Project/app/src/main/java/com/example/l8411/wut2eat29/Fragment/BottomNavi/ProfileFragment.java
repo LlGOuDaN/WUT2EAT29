@@ -1,12 +1,8 @@
-package com.example.l8411.wut2eat29.Fragment;
+package com.example.l8411.wut2eat29.Fragment.BottomNavi;
 
 
-import android.content.Context;
 import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
-import android.app.Fragment;
-import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -14,9 +10,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import com.example.l8411.wut2eat29.Activity.LoginActivity;
-import com.example.l8411.wut2eat29.Activity.MapsActivity;
 import com.example.l8411.wut2eat29.Activity.SettingsActivity;
+import com.example.l8411.wut2eat29.Fragment.HistoryFragment;
 import com.example.l8411.wut2eat29.Model.UserProfile;
 import com.example.l8411.wut2eat29.R;
 
@@ -93,7 +88,7 @@ public class ProfileFragment extends android.support.v4.app.Fragment implements 
         int id = view.getId();
         if(id == R.id.view_history){
             Log.d("History", "click");
-            ft.add(R.id.fragment_container, HistoryFragment.newInstance("1")).commit();
+            ft.add(R.id.fragment_container, HistoryFragment.newInstance("UID")).commit();
             ft.addToBackStack("History");
             return;
         }
