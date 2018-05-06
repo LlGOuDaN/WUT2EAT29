@@ -1,6 +1,5 @@
 package com.example.l8411.wut2eat29.Fragment;
 
-import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
 import android.app.Fragment;
@@ -13,8 +12,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.example.l8411.wut2eat29.Activity.MapsActivity;
-import com.example.l8411.wut2eat29.Adapter.InvitationNameAdapter;
+import com.example.l8411.wut2eat29.Activity.MainActivity;
 import com.example.l8411.wut2eat29.Adapter.StartAVoteAdapter;
 import com.example.l8411.wut2eat29.R;
 
@@ -114,7 +112,7 @@ public class StartAVoteFragment extends android.support.v4.app.Fragment implemen
     public boolean onKey(View view, int i, KeyEvent keyEvent) {
         if (i == KeyEvent.KEYCODE_BACK) {
             Log.d("back", "back click");
-            MapsActivity main = (MapsActivity) getContext();
+            MainActivity main = (MainActivity) getContext();
             getFragmentManager().popBackStack("StartAVote", FragmentManager.POP_BACK_STACK_INCLUSIVE);
             main.navigationView.setVisibility(View.VISIBLE);
             if (main.viewPager.getCurrentItem() == 0) {

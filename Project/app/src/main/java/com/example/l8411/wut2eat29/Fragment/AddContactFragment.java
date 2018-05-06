@@ -8,7 +8,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.example.l8411.wut2eat29.Activity.MapsActivity;
+import com.example.l8411.wut2eat29.Activity.MainActivity;
 import com.example.l8411.wut2eat29.Fragment.BottomNavi.FriendListFragment;
 import com.example.l8411.wut2eat29.R;
 
@@ -56,7 +56,7 @@ public class AddContactFragment extends android.support.v4.app.Fragment implemen
     public boolean onKey(View view, int i, KeyEvent keyEvent) {
         if (i == KeyEvent.KEYCODE_BACK) {
             Log.d("back", "back click");
-            MapsActivity main = (MapsActivity) getContext();
+            MainActivity main = (MainActivity) getContext();
             getFragmentManager().popBackStack("AddContact", FragmentManager.POP_BACK_STACK_INCLUSIVE);
             main.navigationView.setVisibility(View.VISIBLE);
             main.viewPager.setVisibility(View.VISIBLE);
