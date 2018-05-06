@@ -1,7 +1,7 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    tools:context="com.example.l8411.wut2eat29.Activity.MapsActivity">
+    tools:context="com.example.l8411.wut2eat29.Activity.MainActivity">
     <item
         android:id="@+id/action_addContact"
         android:orderInCategory="100"

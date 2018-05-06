@@ -6,11 +6,8 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 
 
-import com.example.l8411.wut2eat29.Fragment.AddContactFragment;
-import com.example.l8411.wut2eat29.Fragment.FriendListFragment;
-import com.example.l8411.wut2eat29.Fragment.InvitationFragment;
-import com.example.l8411.wut2eat29.Fragment.ProfileFragment;
-import com.example.l8411.wut2eat29.Fragment.StartAVoteFragment;
+import com.example.l8411.wut2eat29.Fragment.BottomNavi.FriendListFragment;
+import com.example.l8411.wut2eat29.Fragment.BottomNavi.ProfileFragment;
 import com.example.l8411.wut2eat29.Model.UserProfile;
 import com.google.android.gms.maps.SupportMapFragment;
 

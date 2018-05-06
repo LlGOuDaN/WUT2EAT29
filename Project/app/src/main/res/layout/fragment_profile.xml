@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/gap"
-    tools:context="com.example.l8411.wut2eat29.Fragment.ProfileFragment">
+    tools:context="com.example.l8411.wut2eat29.Fragment.BottomNavi.ProfileFragment">
 
     <ScrollView
         android:layout_width="fill_parent"

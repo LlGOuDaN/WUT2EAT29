@@ -18,17 +18,20 @@ import android.widget.TextView;
 import com.example.l8411.wut2eat29.Fragment.SetStatusFragment;
 import com.example.l8411.wut2eat29.Fragment.SettingPageFragment;
 import com.example.l8411.wut2eat29.R;
+import com.google.firebase.auth.FirebaseAuth;
 
 public class SettingsActivity extends AppCompatActivity implements SettingPageFragment.OnFragmentInteractionListener {
 
 
     private SettingPageFragment settingFragment;
     private SetStatusFragment statusFragment;
+    private FirebaseAuth mAuth;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_settings);
+        mAuth = FirebaseAuth.getInstance();
         settingFragment = new SettingPageFragment();
         statusFragment = new SetStatusFragment();
 
@@ -110,7 +113,8 @@ public class SettingsActivity extends AppCompatActivity implements SettingPageFr
             Log.d("Setting", "logout");
             //TODO create Log out function for Auth
 
-            //Fake One
+            //log out
+            mAuth.signOut();
             Intent intent = new Intent(SettingsActivity.this, LoginActivity.class);
             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
             startActivity(intent);
