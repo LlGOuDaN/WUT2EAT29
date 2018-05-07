@@ -4,6 +4,7 @@ package com.example.l8411.wut2eat29.Fragment.BottomNavi;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.app.FragmentManager;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -12,6 +13,7 @@ import android.widget.TextView;
 
 import com.example.l8411.wut2eat29.Activity.SettingsActivity;
 import com.example.l8411.wut2eat29.Fragment.HistoryFragment;
+import com.example.l8411.wut2eat29.Fragment.ViewVoteFragment;
 import com.example.l8411.wut2eat29.Model.UserProfile;
 import com.example.l8411.wut2eat29.R;
 
@@ -94,6 +96,8 @@ public class ProfileFragment extends android.support.v4.app.Fragment implements 
         }
         if(id == R.id.view_votes){
             Log.d("Votes", "click");
+            ft.add(R.id.fragment_container, ViewVoteFragment.newInstance("UID")).commit();
+            ft.addToBackStack("Votes");
             return;
         }
         if(id == R.id.setting){
