@@ -62,6 +62,7 @@ public class AddContactFragment extends android.support.v4.app.Fragment implemen
             main.viewPager.setVisibility(View.VISIBLE);
             if (main.viewPager.getCurrentItem() == 0) {
                 main.findViewById(R.id.search_view).setVisibility(View.VISIBLE);
+                main.findViewById(R.id.fab_here).setVisibility(View.VISIBLE);
             }
             return true;
         }

@@ -88,6 +88,7 @@ public class InvitationFragment extends Fragment implements View.OnKeyListener {
             main.navigationView.setVisibility(View.VISIBLE);
             if (main.viewPager.getCurrentItem() == 0) {
                 main.findViewById(R.id.search_view).setVisibility(View.VISIBLE);
+                main.findViewById(R.id.fab_here).setVisibility(View.VISIBLE);
             }
             return true;
         }
