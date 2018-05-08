@@ -33,7 +33,9 @@ import com.example.l8411.wut2eat29.Fragment.InvitationFragment;
 import com.example.l8411.wut2eat29.Fragment.BottomNavi.ProfileFragment;
 import com.example.l8411.wut2eat29.Fragment.StartAVoteFragment;
 import com.example.l8411.wut2eat29.GooglePlaces.GetNearbyPlacesData;
+import com.example.l8411.wut2eat29.Utils.FirebaseData;
 import com.example.l8411.wut2eat29.Model.Restaurant;
+import com.example.l8411.wut2eat29.Model.UserProfile;
 import com.example.l8411.wut2eat29.R;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -43,6 +45,13 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
+import com.google.firebase.database.ValueEventListener;
 
 public class MainActivity extends AppCompatActivity implements OnMapReadyCallback, ViewPager.OnPageChangeListener, SearchView.OnQueryTextListener {
 
@@ -62,6 +71,8 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     private String keyWord;
     private FloatingActionButton fab_here;
     private Restaurant choice = null;
+    private DatabaseReference mRef;
+    private FirebaseAuth mAuth;
 
 
     @Override
@@ -77,6 +88,8 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         viewPager = this.findViewById(R.id.container);
         viewPager.setAdapter(navigationPagerAdapter);
         viewPager.addOnPageChangeListener(this);
+        mRef = FirebaseDatabase.getInstance().getReference();
+        mAuth = FirebaseAuth.getInstance();
 
 
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
@@ -119,6 +132,8 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                 builder.create().show();
             }
         });
+
+
     }
 
 

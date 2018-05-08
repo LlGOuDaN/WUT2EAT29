@@ -3,28 +3,41 @@ package com.example.l8411.wut2eat29.Model;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import com.google.firebase.database.Exclude;
+
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by l8411 on 4/14/2018.
  */
 
 public class UserProfile implements Parcelable {
-    private int UserID;
-    private String[] Top3Choice;
-    private ArrayList<String> history;
-    private ArrayList<String> vote;
+    private String UserID;
+    private String UserNickName;
+    private List<String> Top3Choice;
+    private List<String> history;
+    private List<String> vote;
 
-    public UserProfile(int userID, String[] top3Choice, ArrayList<String> history, ArrayList<String> vote) {
-        UserID = userID;
-        Top3Choice = top3Choice;
-        this.history = history;
-        this.vote = vote;
+    public UserProfile() {
+
     }
 
+    public UserProfile(String userID) {
+        UserID = userID;
+        UserNickName = "Default";
+        this.Top3Choice = new ArrayList<String>();
+        this.history = new ArrayList<String>();
+        this.vote = new ArrayList<String>();
+        for (int i = 0; i < 3; i++) {
+            Top3Choice.add("N/A");
+        }
+    }
+
+
     protected UserProfile(Parcel in) {
-        UserID = in.readInt();
-        Top3Choice = in.createStringArray();
+        UserID = in.readString();
+        Top3Choice = in.createStringArrayList();
         history = in.createStringArrayList();
         vote = in.createStringArrayList();
     }
@@ -41,23 +54,31 @@ public class UserProfile implements Parcelable {
         }
     };
 
-    public int getUserID() {
+    public String getUserNiceName() {
+        return UserNickName;
+    }
+
+    public void setUserNiceName(String userNiceName) {
+        UserNickName = userNiceName;
+    }
+
+    public String getUserID() {
         return UserID;
     }
 
-    public void setUserID(int userID) {
+    public void setUserID(String userID) {
         UserID = userID;
     }
 
-    public String[] getTop3Choice() {
+    public List<String> getTop3Choice() {
         return Top3Choice;
     }
 
-    public void setTop3Choice(String[] top3Choice) {
+    public void setTop3Choice(List<String> top3Choice) {
         Top3Choice = top3Choice;
     }
 
-    public ArrayList<String> getHistory() {
+    public List<String> getHistory() {
         return history;
     }
 
@@ -65,7 +86,7 @@ public class UserProfile implements Parcelable {
         this.history = history;
     }
 
-    public ArrayList<String> getVote() {
+    public List<String> getVote() {
         return vote;
     }
 
@@ -80,8 +101,8 @@ public class UserProfile implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel parcel, int i) {
-        parcel.writeInt(UserID);
-        parcel.writeStringArray(Top3Choice);
+        parcel.writeString(UserID);
+        parcel.writeStringList(Top3Choice);
         parcel.writeStringList(history);
         parcel.writeStringList(vote);
     }

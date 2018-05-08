@@ -15,6 +15,8 @@ import com.example.l8411.wut2eat29.Fragment.HistoryFragment;
 import com.example.l8411.wut2eat29.Model.UserProfile;
 import com.example.l8411.wut2eat29.R;
 
+import java.util.ArrayList;
+
 
 public class ProfileFragment extends android.support.v4.app.Fragment implements View.OnClickListener{
     // TODO: Rename parameter arguments, choose names that match
@@ -23,11 +25,11 @@ public class ProfileFragment extends android.support.v4.app.Fragment implements 
 
     // TODO: Rename and change types of parameters
     private UserProfile mProfile;
-    private TextView mUID;
+    private TextView mNickName;
     private TextView mTopAChoice;
     private TextView mTopBChoice;
     private TextView mTopCChoice;
-    private String[] top3Choices;
+    private ArrayList<String> top3Choices;
     private TextView mViewHistory;
     private TextView mViewVotes;
     private TextView mSetting;
@@ -59,22 +61,24 @@ public class ProfileFragment extends android.support.v4.app.Fragment implements 
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         mProfile = getArguments().getParcelable(ARG_PROFILE);
-        top3Choices = mProfile.getTop3Choice();
+        top3Choices = (ArrayList) mProfile.getTop3Choice();
         View rootView = inflater.inflate(R.layout.fragment_profile, container, false);
-        mUID = rootView.findViewById(R.id.UID);
+        mNickName = rootView.findViewById(R.id.UID);
         mTopAChoice = rootView.findViewById(R.id.topChoiceA);
         mTopBChoice = rootView.findViewById(R.id.topChoiceB);
         mTopCChoice = rootView.findViewById(R.id.topChoiceC);
 
+
+        Log.d("NickName", mProfile.getUserNiceName());
         mViewHistory = rootView.findViewById(R.id.view_history);
         mViewVotes = rootView.findViewById(R.id.view_votes);
         mSetting = rootView.findViewById(R.id.setting);
 
 
-        mUID.setText(mProfile.getUserID()+"");
-        mTopAChoice.setText(top3Choices[0]);
-        mTopBChoice.setText(top3Choices[1]);
-        mTopCChoice.setText(top3Choices[2]);
+        mNickName.setText(mProfile.getUserNiceName());
+        mTopAChoice.setText(top3Choices.get(0));
+        mTopBChoice.setText(top3Choices.get(1));
+        mTopCChoice.setText(top3Choices.get(2));
 
         mViewHistory.setOnClickListener(this);
         mViewVotes.setOnClickListener(this);
