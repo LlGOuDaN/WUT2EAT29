@@ -29,8 +29,10 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
 import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -43,6 +45,8 @@ public class LoginActivity extends AppCompatActivity implements LoginFragment.On
     private GoogleApiClient mGoogleApiClient;
     private DatabaseReference mRef;
     private boolean isNew;
+    private OnCompleteListener<AuthResult> mOnRegisterCompleteListener;
+    private LoginFragment loginFragment;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -51,7 +55,8 @@ public class LoginActivity extends AppCompatActivity implements LoginFragment.On
         mAuth = FirebaseAuth.getInstance();
         mRef = FirebaseDatabase.getInstance().getReference();
         FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-        ft.add(R.id.login_container, new LoginFragment());
+        loginFragment = new LoginFragment();
+        ft.add(R.id.login_container, loginFragment);
         ft.commit();
 
         initializeListener();
@@ -88,15 +93,51 @@ public class LoginActivity extends AppCompatActivity implements LoginFragment.On
             public void onComplete(@NonNull Task<AuthResult> task) {
                 if (!task.isSuccessful()) {
                     showLoginError("Authentication failed");
-                } else {
+                }else{
                     isNew = task.getResult().getAdditionalUserInfo().isNewUser();
                     if (isNew) {
-                        FirebaseData.CURRENT_USER = new UserProfile(mAuth.getCurrentUser().getUid());
-                        mRef.child("user").child(mAuth.getCurrentUser().getUid()).setValue(FirebaseData.CURRENT_USER);
-                    } else {
+                        mRef.child("usernumber").addListenerForSingleValueEvent(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(DataSnapshot dataSnapshot) {
+                                Long numOfuser = (Long) dataSnapshot.getValue();
+                                String uid = Long.toString(numOfuser);
+                                UserProfile user = new UserProfile(uid);
+                                mRef.child("user").child(mAuth.getCurrentUser().getUid()).setValue(user);
+                                numOfuser++;
+                                mRef.child("usernumber").setValue(numOfuser);
+                            }
+                            @Override
+                            public void onCancelled(DatabaseError databaseError) {
 
+                            }
+                        });
                     }
-                    Log.d("isNew", isNew + "");
+                }
+            }
+        };
+
+        mOnRegisterCompleteListener = new OnCompleteListener<AuthResult>() {
+            @Override
+            public void onComplete(@NonNull Task<AuthResult> task) {
+                if(!task.isSuccessful()){
+                    showRegisterError();
+                }else{
+                    mRef.child("usernumber").addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(DataSnapshot dataSnapshot) {
+                            Long numOfuser = (Long) dataSnapshot.getValue();
+                            String uid = Long.toString(numOfuser);
+                            UserProfile user = new UserProfile(uid);
+                            mRef.child("user").child(mAuth.getCurrentUser().getUid()).setValue(user);
+                            numOfuser++;
+                            mRef.child("usernumber").setValue(numOfuser);
+                        }
+
+                        @Override
+                        public void onCancelled(DatabaseError databaseError) {
+
+                        }
+                    });
                 }
             }
         };
@@ -128,14 +169,22 @@ public class LoginActivity extends AppCompatActivity implements LoginFragment.On
     }
 
     @Override
+    public void onRegister(String email, String password) {
+        mAuth.createUserWithEmailAndPassword(email, password).addOnCompleteListener(mOnRegisterCompleteListener);
+    }
+
+    @Override
     public void onGoogleLogin() {
         Intent intent = Auth.GoogleSignInApi.getSignInIntent(mGoogleApiClient);
         startActivityForResult(intent, RC_GOOGLE_LOGIN);
     }
 
     private void showLoginError(String message) {
-        LoginFragment loginFragment = (LoginFragment) getSupportFragmentManager().findFragmentByTag("Login");
         loginFragment.onLoginError(message);
+    }
+
+    private void showRegisterError(){
+        loginFragment.onRegisterError();
     }
 
 
@@ -160,30 +209,5 @@ public class LoginActivity extends AppCompatActivity implements LoginFragment.On
         }
     }
 
-    private void getUserData(DataSnapshot dataSnapshot) {
-        if (dataSnapshot.getKey().equals("top3Choice")) {
-            FirebaseData.CURRENT_USER.setTop3Choice((List<String>) dataSnapshot.getValue());
-
-            return;
-        }
-        if (dataSnapshot.getKey().equals("userId")) {
-            FirebaseData.CURRENT_USER.setUserID((String) dataSnapshot.getValue());
-
-            return;
-        }
-        if (dataSnapshot.getKey().equals("history")) {
-            FirebaseData.CURRENT_USER.setHistory((ArrayList<String>) dataSnapshot.getValue());
-            return;
-        }
-        if (dataSnapshot.getKey().equals("userNickName")) {
-            FirebaseData.CURRENT_USER.setUserNiceName((String) dataSnapshot.child("userNickName").getValue());
-
-            return;
-        }
-        if (dataSnapshot.getKey().equals("vote")) {
-            FirebaseData.CURRENT_USER.setVote((ArrayList<String>) dataSnapshot.getValue());
-            return;
-        }
-    }
 }
 

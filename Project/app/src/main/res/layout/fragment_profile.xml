@@ -46,6 +46,14 @@
                     android:layout_toRightOf="@+id/head"
                     android:text="@string/Default"
                     android:textSize="18.0dip" />
+                <TextView
+                    android:layout_below="@+id/UID"
+                    android:layout_toRightOf="@+id/head"
+                    android:id="@+id/user_id"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/Default"
+                    android:textSize="10dp"/>
 
             </RelativeLayout>
 

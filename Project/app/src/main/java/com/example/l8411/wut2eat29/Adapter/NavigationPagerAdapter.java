@@ -47,7 +47,8 @@ public class NavigationPagerAdapter extends FragmentPagerAdapter {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 CURRENT_USER = dataSnapshot.getValue(UserProfile.class);
-                Log.d("cao", CURRENT_USER.getUserNiceName());
+//                Log.d("cao", CURRENT_USER.getUserNickName());
+                CURRENT_USER = new UserProfile("123");
                 mList.add(ProfileFragment.newInstance(CURRENT_USER));
                 notifyDataSetChanged();
             }

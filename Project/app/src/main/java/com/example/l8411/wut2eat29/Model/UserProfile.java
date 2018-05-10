@@ -54,11 +54,11 @@ public class UserProfile implements Parcelable {
         }
     };
 
-    public String getUserNiceName() {
+    public String getUserNickName() {
         return UserNickName;
     }
 
-    public void setUserNiceName(String userNiceName) {
+    public void setUserNickName(String userNiceName) {
         UserNickName = userNiceName;
     }
 

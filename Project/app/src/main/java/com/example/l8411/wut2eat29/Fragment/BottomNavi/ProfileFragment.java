@@ -33,7 +33,8 @@ public class ProfileFragment extends android.support.v4.app.Fragment implements 
     private TextView mViewHistory;
     private TextView mViewVotes;
     private TextView mSetting;
-
+    private TextView mUserId;
+    private View userView;
 
     public ProfileFragment() {
         // Required empty public constructor
@@ -67,22 +68,25 @@ public class ProfileFragment extends android.support.v4.app.Fragment implements 
         mTopAChoice = rootView.findViewById(R.id.topChoiceA);
         mTopBChoice = rootView.findViewById(R.id.topChoiceB);
         mTopCChoice = rootView.findViewById(R.id.topChoiceC);
+        mUserId = rootView.findViewById(R.id.user_id);
 
 
-        Log.d("NickName", mProfile.getUserNiceName());
+        Log.d("NickName", mProfile.getUserNickName());
         mViewHistory = rootView.findViewById(R.id.view_history);
         mViewVotes = rootView.findViewById(R.id.view_votes);
         mSetting = rootView.findViewById(R.id.setting);
 
 
-        mNickName.setText(mProfile.getUserNiceName());
+        mNickName.setText(mProfile.getUserNickName());
         mTopAChoice.setText(top3Choices.get(0));
         mTopBChoice.setText(top3Choices.get(1));
         mTopCChoice.setText(top3Choices.get(2));
+        mUserId.setText("UID = " + mProfile.getUserID());
 
         mViewHistory.setOnClickListener(this);
         mViewVotes.setOnClickListener(this);
         mSetting.setOnClickListener(this);
+
         return rootView;
     }
 
