@@ -35,9 +35,16 @@ import com.google.firebase.database.ValueEventListener;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
+import java.security.KeyStore;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.TreeMap;
 
 
 public class ProfileFragment extends android.support.v4.app.Fragment implements View.OnClickListener, View.OnLongClickListener {
@@ -111,11 +118,13 @@ public class ProfileFragment extends android.support.v4.app.Fragment implements 
         mUserRef.child(mAuth.getCurrentUser().getUid()).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-//                Log.d("wtf", dataSnapshot.getKey());
                 mProfile = dataSnapshot.getValue(UserProfile.class);
 //                mProfile = new UserProfile("1212");
                 mNickName.setText(mProfile.getUserNickName());
-                top3Choices = (ArrayList) mProfile.getTop3Choice();
+                if(mProfile.getHistory() == null){
+                    mProfile.setHistory(new ArrayList<History>());
+                }
+                top3Choices = getTopThreeChoice(mProfile.getHistory());
                 mTopAChoice.setText(top3Choices.get(0));
                 mTopBChoice.setText(top3Choices.get(1));
                 mTopCChoice.setText(top3Choices.get(2));
@@ -124,22 +133,59 @@ public class ProfileFragment extends android.support.v4.app.Fragment implements 
                 if(choice == null){
                     choice = getEmptyHistory();
                 }
-                //
+
                 if(choice.getDateFormated().equals("NULL") || !choice.getDateFormated().equals(utils.parseDate( Calendar.getInstance().getTime())) ){
                     mTodayChoice.setText(R.string.not_decided_yet);
                     if(!choice.getDateFormated().equals("NULL")){
-                        if(mProfile.getHistory() == null){
-                            mProfile.setHistory(new ArrayList<History>());
-                        }
+
                         mProfile.getHistory().add(0,choice);
                         mUserRef.child(mAuth.getCurrentUser().getUid()).child("history").setValue(mProfile.getHistory());
-                        mUserRef.child(mAuth.getCurrentUser().getUid()).child("todayChoice").setValue(getEmptyHistory());
+                        mUserRef.child(mAuth.getCurrentUser().getUid()).child("todayChoice").setValue( choice = getEmptyHistory());
                     }
                 }else{
                     mTodayChoice.setText(String.format("Choice: %s", mProfile.getTodayChoice().getResturant().getName()));
                 }
 
                 new GetImageTask().execute(mProfile.getAvatarUrl());
+            }
+
+            private ArrayList<String> getTopThreeChoice(List<History> history) {
+                ArrayList<String> resTop3 = new ArrayList<>();
+                Map<String, Integer> frequentMap = new HashMap<>();
+                for(int i = 0; i < history.size(); i++){
+                    String name = history.get(i).getResturant().getName();
+                    if(frequentMap.containsKey(name)){
+                        int current = frequentMap.get(name);
+                        frequentMap.put(name,current++);
+                    }else{
+                        frequentMap.put(name, 1);
+                    }
+                }
+
+                Set<Map.Entry<String,Integer>> set = frequentMap.entrySet();
+                List<Map.Entry<String,Integer>> list = new ArrayList<Map.Entry<String, Integer>>(set);
+                Collections.sort(list, new Comparator<Map.Entry<String, Integer>>() {
+                    @Override
+                    public int compare(Map.Entry<String, Integer> stringIntegerEntry, Map.Entry<String, Integer> t1) {
+                        return (t1.getValue().compareTo(stringIntegerEntry.getValue()));
+                    }
+                });
+
+                if(list.size() <= 3){
+                    for(int i = 0; i < list.size(); i++){
+                        resTop3.add(list.get(i).getKey());
+                    }
+                    for(int i = 0; i < 3-list.size(); i++){
+                        resTop3.add("N/A");
+                    }
+                }else{
+                    for(int i = 0; i < 3; i++){
+                        resTop3.add(list.get(i).getKey());
+                    }
+                }
+
+
+                return resTop3;
             }
 
             private History getEmptyHistory() {

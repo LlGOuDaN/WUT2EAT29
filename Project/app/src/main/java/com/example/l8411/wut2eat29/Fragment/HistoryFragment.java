@@ -79,6 +79,9 @@ public class HistoryFragment extends Fragment {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 List<HashMap> historyList = (List<HashMap>) dataSnapshot.getValue();
+                if(historyList == null){
+                    historyList = new ArrayList<HashMap>();
+                }
                 recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
                 recyclerView.setHasFixedSize(true);
                 HistoryAdapter adapter = new HistoryAdapter(historyList);
