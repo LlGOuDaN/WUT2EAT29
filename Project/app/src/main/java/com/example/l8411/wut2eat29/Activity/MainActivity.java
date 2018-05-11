@@ -33,25 +33,18 @@ import com.example.l8411.wut2eat29.Fragment.InvitationFragment;
 import com.example.l8411.wut2eat29.Fragment.BottomNavi.ProfileFragment;
 import com.example.l8411.wut2eat29.Fragment.StartAVoteFragment;
 import com.example.l8411.wut2eat29.GooglePlaces.GetNearbyPlacesData;
-import com.example.l8411.wut2eat29.Utils.FirebaseData;
+import com.example.l8411.wut2eat29.Model.History;
 import com.example.l8411.wut2eat29.Model.Restaurant;
-import com.example.l8411.wut2eat29.Model.UserProfile;
 import com.example.l8411.wut2eat29.R;
-import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
-import com.google.android.gms.maps.model.BitmapDescriptorFactory;
-import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
-import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.Query;
-import com.google.firebase.database.ValueEventListener;
+
+import java.util.Calendar;
 
 public class MainActivity extends AppCompatActivity implements OnMapReadyCallback, ViewPager.OnPageChangeListener, SearchView.OnQueryTextListener {
 
@@ -80,7 +73,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_maps);
         previousFrag = "";
-        keyWord = "royal mandarin";
+        keyWord = "food";
         fab_here = this.findViewById(R.id.fab_here);
         searchView = this.findViewById(R.id.search_view);
         fragmentManager = getSupportFragmentManager();
@@ -116,16 +109,19 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
             public void onClick(View view) {
                 AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
                 builder.setTitle("You Choice of Day");
-                if(choice != null){
+                if (choice != null) {
                     builder.setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialogInterface, int i) {
-                            // some firebase stuff
+                            FirebaseAuth mAuth = FirebaseAuth.getInstance();
+                            DatabaseReference mRef = FirebaseDatabase.getInstance().getReference();
+                            History dayOfChoice = new History(choice, Calendar.getInstance().getTime());
+                            mRef.child("user").child(mAuth.getCurrentUser().getUid()).child("todayChoice").setValue(dayOfChoice);
                         }
                     });
                     builder.setNegativeButton(android.R.string.cancel, null);
                     builder.setMessage(choice.getName() + "\n" + choice.getVicinity() + "\nAre you sure?");
-                }else{
+                } else {
                     builder.setMessage("Please make a choice first.");
                 }
 
@@ -198,11 +194,6 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         }
 
 
-        LatLng mPosition = new LatLng(Lat, log);
-        final Marker mPos = mMap.addMarker(new MarkerOptions().position(mPosition).title("Marker my position").draggable(true).icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN)));
-        mPos.showInfoWindow();
-        mMap.moveCamera(CameraUpdateFactory.newLatLng(mPosition));
-
         String url = gerUrl(Lat, log, keyWord);
         Object dataTransfer[] = {googleMap, url};
         GetNearbyPlacesData getNearbyPlacesData = new GetNearbyPlacesData();
@@ -211,14 +202,14 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
             @Override
             public boolean onMarkerClick(Marker marker) {
-                if(marker != mPos)
-                if(marker.isInfoWindowShown()){
+                if (marker.isInfoWindowShown()) {
                     marker.hideInfoWindow();
-                }else{
+                } else {
                     choice = new Restaurant(marker.getTitle(), marker.getSnippet());
                     marker.showInfoWindow();
                 }
-                return false;
+
+                return true;
             }
         });
     }

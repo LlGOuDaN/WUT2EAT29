@@ -12,10 +12,16 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
-public class FirebaseData {
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
+public class utils {
     public static UserProfile CURRENT_USER;
 
-    public static void getUserProfile() {
-
+    public static String parseDate(Date date){
+        String format = "MM/dd/yyyy";
+        SimpleDateFormat sdf = new SimpleDateFormat(format);
+        String dateFormated = sdf.format(date);
+        return dateFormated;
     }
 }

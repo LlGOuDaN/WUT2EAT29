@@ -8,19 +8,28 @@ import android.widget.TextView;
 
 import com.example.l8411.wut2eat29.Model.History;
 import com.example.l8411.wut2eat29.R;
+import com.example.l8411.wut2eat29.Utils.utils;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.ChildEventListener;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.GregorianCalendar;
+import java.util.HashMap;
 import java.util.List;
 
 public class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.ViewHolder> {
-    List<History> historyList;
+    List<HashMap> historyList;
+    DatabaseReference mRef;
+    FirebaseAuth mAuth;
 
-    public HistoryAdapter() {
-        this.historyList = new ArrayList<>();
-        historyList.add(new History("BK", new GregorianCalendar().getTime()));
-        historyList.add(new History("KK", new GregorianCalendar(2018,1,1).getTime()));
+    public HistoryAdapter(List<HashMap> historyList) {
+        this.historyList = historyList;
     }
 
     @Override
@@ -30,15 +39,11 @@ public class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.ViewHold
     }
 
     @Override
-    public void onBindViewHolder(ViewHolder holder, int position) {
-        String format = "MM/dd/yyyy";
-        SimpleDateFormat sdf = new SimpleDateFormat(format);
-        String name = historyList.get(position).getResturantName();
-        String date = sdf.format(historyList.get(position).getDate());
-
-        holder.ResNmae.setText(name);
-        holder.DateText.setText(date);
-
+    public void onBindViewHolder(final ViewHolder holder, final int position) {
+        HashMap restaurant = (HashMap) historyList.get(position).get("resturant");
+        String name = (String) restaurant.get("name");
+        holder.ResName.setText(name);
+        holder.DateText.setText((String) historyList.get(position).get("dateFormated"));
     }
 
     @Override
@@ -47,12 +52,12 @@ public class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.ViewHold
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {
-        private TextView ResNmae;
+        private TextView ResName;
         private TextView DateText;
 
         public ViewHolder(View itemView) {
             super(itemView);
-            ResNmae = itemView.findViewById(R.id.resName_view);
+            ResName = itemView.findViewById(R.id.resName_view);
             DateText = itemView.findViewById(R.id.date_view);
         }
     }

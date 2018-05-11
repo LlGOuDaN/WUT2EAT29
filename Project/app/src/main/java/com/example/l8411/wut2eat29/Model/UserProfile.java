@@ -16,29 +16,49 @@ public class UserProfile implements Parcelable {
     private String UserID;
     private String UserNickName;
     private List<String> Top3Choice;
-    private List<String> history;
+    private List<History> history;
     private List<String> vote;
+    private String avatarUrl;
+    private History todayChoice;
 
     public UserProfile() {
 
     }
 
+    public String getAvatarUrl() {
+        return avatarUrl;
+    }
+
+    public void setAvatarUrl(String avatarUrl) {
+        this.avatarUrl = avatarUrl;
+    }
+
+
+    public History getTodayChoice() {
+        return todayChoice;
+    }
+
+    public void setTodayChoice(History todayChoice) {
+        this.todayChoice = todayChoice;
+    }
+
     public UserProfile(String userID) {
         UserID = userID;
         UserNickName = "Default";
+        avatarUrl = "https://firebasestorage.googleapis.com/v0/b/wut2eat29.appspot.com/o/default-avatar.png?alt=media&token=6293fd9b-07a2-470a-83c6-47b57cf17d89";
         this.Top3Choice = new ArrayList<String>();
-        this.history = new ArrayList<String>();
+        this.history = new ArrayList<History>();
         this.vote = new ArrayList<String>();
         for (int i = 0; i < 3; i++) {
             Top3Choice.add("N/A");
         }
+
     }
 
 
     protected UserProfile(Parcel in) {
         UserID = in.readString();
         Top3Choice = in.createStringArrayList();
-        history = in.createStringArrayList();
         vote = in.createStringArrayList();
     }
 
@@ -78,11 +98,11 @@ public class UserProfile implements Parcelable {
         Top3Choice = top3Choice;
     }
 
-    public List<String> getHistory() {
+    public List<History> getHistory() {
         return history;
     }
 
-    public void setHistory(ArrayList<String> history) {
+    public void setHistory(ArrayList<History> history) {
         this.history = history;
     }
 
@@ -103,7 +123,6 @@ public class UserProfile implements Parcelable {
     public void writeToParcel(Parcel parcel, int i) {
         parcel.writeString(UserID);
         parcel.writeStringList(Top3Choice);
-        parcel.writeStringList(history);
         parcel.writeStringList(vote);
     }
 }

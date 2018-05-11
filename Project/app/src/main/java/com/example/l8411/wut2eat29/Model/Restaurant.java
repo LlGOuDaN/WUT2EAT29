@@ -4,6 +4,9 @@ public class Restaurant {
     private String name;
     private String vicinity;
 
+    public Restaurant() {
+    }
+
     public Restaurant(String name, String vicinity) {
         this.name = name;
         this.vicinity = vicinity;

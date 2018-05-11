@@ -1,32 +1,48 @@
 package com.example.l8411.wut2eat29.Model;
 
+import com.google.firebase.database.Exclude;
+
+import java.text.SimpleDateFormat;
 import java.util.Date;
 
 public class History {
-    private String resturantName;
+    private Restaurant resturant;
     private Date date;
+    private String dateFormated;
 
     public History() {
     }
 
-    public History(String resturantName, Date date) {
-        this.resturantName = resturantName;
+    public History(Restaurant resturant, Date date) {
+        this.resturant = resturant;
         this.date = date;
+        String format = "MM/dd/yyyy";
+        SimpleDateFormat sdf = new SimpleDateFormat(format);
+        dateFormated = sdf.format(date);
     }
 
-    public String getResturantName() {
-        return resturantName;
+    public Restaurant getResturant() {
+        return resturant;
     }
 
-    public void setResturantName(String resturantName) {
-        this.resturantName = resturantName;
+    public void setResturant(Restaurant resturant) {
+        this.resturant = resturant;
     }
-
+    @Exclude
     public Date getDate() {
         return date;
     }
-
+    @Exclude
     public void setDate(Date date) {
         this.date = date;
     }
+
+    public String getDateFormated() {
+        return dateFormated;
+    }
+
+    public void setDateFormated(String dateFormated) {
+        this.dateFormated = dateFormated;
+    }
+
 }

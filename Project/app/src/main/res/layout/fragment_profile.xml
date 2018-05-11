@@ -36,7 +36,7 @@
                     android:layout_height="80.0dip"
                     android:layout_marginLeft="10dp"
                     android:layout_marginRight="10dp"
-                    android:src="@drawable/wexin" />
+                    android:src="@drawable/default_avatar" />
 
                 <TextView
                     android:id="@+id/UID"
@@ -62,17 +62,31 @@
                 android:layout_height="1.0dip"
                 android:background="@color/gap" />
 
+            <TextView
+                android:id="@+id/todayChoice"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:text="@string/Default"
+                android:gravity="center_vertical"
+                android:paddingLeft="16dp"
+                android:paddingRight="16dp"
+                android:background="@color/colorWhite"
+                />
+
+            <View
+                android:layout_width="fill_parent"
+                android:layout_height="1.0dip"
+                android:background="@color/gap" />
 
             <TextView
                 android:id="@+id/textView2"
                 android:layout_width="match_parent"
                 android:layout_height="50dp"
-                android:layout_marginTop="20dp"
+                android:background="@color/colorWhite"
                 android:gravity="center_vertical"
                 android:paddingLeft="16dp"
                 android:paddingRight="16dp"
                 android:text="@string/top_3_choice"
-                android:background="@color/colorWhite"
                 android:textSize="16sp" />
 
             <RelativeLayout
@@ -80,11 +94,11 @@
                 android:layout_height="wrap_content"
                 android:background="@color/colorWhite">
 
+
                 <TextView
                     android:id="@+id/topChoiceA"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="16dp"
                     android:layout_centerHorizontal="true"
                     android:text="@string/a" />
 
@@ -151,13 +165,13 @@
                 android:id="@+id/setting"
                 android:layout_width="fill_parent"
                 android:layout_height="50dp"
+                android:background="@color/colorWhite"
                 android:drawablePadding="10dp"
                 android:gravity="center_vertical"
                 android:paddingLeft="16dp"
                 android:paddingRight="16dp"
                 android:text="@string/setting"
-                android:textSize="16sp"
-                android:background="@color/colorWhite"/>
+                android:textSize="16sp" />
 
         </LinearLayout>
     </ScrollView>
