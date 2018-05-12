@@ -17,18 +17,18 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentStart="true"
-                android:layout_alignTop="@+id/editText2"
+                android:layout_alignTop="@+id/edit_uid"
                 android:text="@string/user_id"
                 android:textSize="30sp"
                 tools:layout_editor_absoluteX="36dp"
                 tools:layout_editor_absoluteY="225dp" />
 
             <EditText
-                android:id="@+id/editText2"
+                android:id="@+id/edit_uid"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentTop="true"
-                android:layout_alignStart="@+id/button2"
+                android:layout_alignStart="@+id/button_send_invitation"
                 android:layout_marginTop="162dp"
                 android:ems="10"
                 android:inputType="number"
@@ -36,7 +36,7 @@
                 tools:layout_editor_absoluteY="205dp" />
 
             <Button
-                android:id="@+id/button2"
+                android:id="@+id/button_send_invitation"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentBottom="true"

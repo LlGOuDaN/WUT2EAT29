@@ -25,22 +25,6 @@ public class UserProfile implements Parcelable {
 
     }
 
-    public String getAvatarUrl() {
-        return avatarUrl;
-    }
-
-    public void setAvatarUrl(String avatarUrl) {
-        this.avatarUrl = avatarUrl;
-    }
-
-
-    public History getTodayChoice() {
-        return todayChoice;
-    }
-
-    public void setTodayChoice(History todayChoice) {
-        this.todayChoice = todayChoice;
-    }
 
     public UserProfile(String userID) {
         UserID = userID;
@@ -61,6 +45,7 @@ public class UserProfile implements Parcelable {
         Top3Choice = in.createStringArrayList();
         vote = in.createStringArrayList();
     }
+
 
     public static final Creator<UserProfile> CREATOR = new Creator<UserProfile>() {
         @Override
@@ -114,6 +99,24 @@ public class UserProfile implements Parcelable {
         this.vote = vote;
     }
 
+    public String getAvatarUrl() {
+        return avatarUrl;
+    }
+
+    public void setAvatarUrl(String avatarUrl) {
+        this.avatarUrl = avatarUrl;
+    }
+
+
+    public History getTodayChoice() {
+        return todayChoice;
+    }
+
+    public void setTodayChoice(History todayChoice) {
+        this.todayChoice = todayChoice;
+    }
+
+
     @Override
     public int describeContents() {
         return 0;
@@ -122,7 +125,9 @@ public class UserProfile implements Parcelable {
     @Override
     public void writeToParcel(Parcel parcel, int i) {
         parcel.writeString(UserID);
+        parcel.writeString(UserNickName);
         parcel.writeStringList(Top3Choice);
         parcel.writeStringList(vote);
+        parcel.writeString(avatarUrl);
     }
 }

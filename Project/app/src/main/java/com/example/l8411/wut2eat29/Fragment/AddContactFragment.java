@@ -1,5 +1,7 @@
 package com.example.l8411.wut2eat29.Fragment;
 
+import android.app.AlertDialog;
+import android.app.Dialog;
 import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
 import android.util.Log;
@@ -7,15 +9,29 @@ import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
 
 import com.example.l8411.wut2eat29.Activity.MainActivity;
 import com.example.l8411.wut2eat29.Fragment.BottomNavi.FriendListFragment;
+import com.example.l8411.wut2eat29.Model.Invitation;
 import com.example.l8411.wut2eat29.R;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
+import com.google.firebase.database.ValueEventListener;
 
-public class AddContactFragment extends android.support.v4.app.Fragment implements View.OnKeyListener {
+public class AddContactFragment extends android.support.v4.app.Fragment implements View.OnKeyListener, View.OnClickListener {
 
 
     private FriendListFragment.OnFragmentInteractionListener mListener;
+    private EditText edit_uid;
+    private View confirmButton;
+    private DatabaseReference mRef;
+    private FirebaseAuth mAuth;
+
 
     public AddContactFragment() {
         // Required empty public constructor
@@ -38,7 +54,8 @@ public class AddContactFragment extends android.support.v4.app.Fragment implemen
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
+        mRef = FirebaseDatabase.getInstance().getReference();
+        mAuth = FirebaseAuth.getInstance();
     }
 
     @Override
@@ -46,9 +63,13 @@ public class AddContactFragment extends android.support.v4.app.Fragment implemen
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_add_contact, container, false);
+        confirmButton = view.findViewById(R.id.button_send_invitation);
+        edit_uid = view.findViewById(R.id.edit_uid);
         view.setFocusableInTouchMode(true);
         view.requestFocus();
         view.setOnKeyListener(this);
+
+        confirmButton.setOnClickListener(this);
         return view;
     }
 
@@ -68,6 +89,46 @@ public class AddContactFragment extends android.support.v4.app.Fragment implemen
         }
         Log.d("back", "back click");
         return false;
+    }
+
+    @Override
+    public void onClick(View view) {
+
+        if(view.getId() == R.id.button_send_invitation){
+            final String recv_uid = edit_uid.getText().toString();
+            Query query = mRef.child("user").orderByChild("userID").equalTo(recv_uid);
+            query.addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    if(dataSnapshot.exists()){
+                        DatabaseReference sendRef = mRef.child("user").child(mAuth.getCurrentUser().getUid());
+                        sendRef.child("userID").addListenerForSingleValueEvent(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(DataSnapshot dataSnapshot) {
+                                String send_uid = (String) dataSnapshot.getValue();
+                                String invitationKey = mRef.child("invitation").push().getKey();
+                                mRef.child("invitation").child(invitationKey).setValue(new Invitation(send_uid, recv_uid));
+                            }
+
+                            @Override
+                            public void onCancelled(DatabaseError databaseError) {
+
+                            }
+                        });
+                    }else{
+                        AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+                        builder.setTitle(R.string.sorry);
+                        builder.setMessage(R.string.user_does_not_exist);
+                        builder.create().show();
+                    }
+                }
+
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
+
+                }
+            });
+        }
     }
 
 
