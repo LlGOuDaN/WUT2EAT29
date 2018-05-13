@@ -2,6 +2,7 @@ package com.example.l8411.wut2eat29.Fragment;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
 import android.util.Log;
@@ -26,7 +27,6 @@ import com.google.firebase.database.ValueEventListener;
 public class AddContactFragment extends android.support.v4.app.Fragment implements View.OnKeyListener, View.OnClickListener {
 
 
-    private FriendListFragment.OnFragmentInteractionListener mListener;
     private EditText edit_uid;
     private View confirmButton;
     private DatabaseReference mRef;
@@ -115,6 +115,10 @@ public class AddContactFragment extends android.support.v4.app.Fragment implemen
 
                             }
                         });
+                        AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+                        builder.setTitle(R.string.success);
+                        builder.setMessage(R.string.invitation_sent);
+                        builder.create().show();
                     }else{
                         AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
                         builder.setTitle(R.string.sorry);

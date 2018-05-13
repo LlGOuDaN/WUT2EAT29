@@ -66,5 +66,7 @@
     <string name="not_decided_yet">Not Decided Yet</string>
     <string name="sorry">Sorry</string>
     <string name="user_does_not_exist">User does not exist!</string>
+    <string name="success">Success!</string>
+    <string name="invitation_sent">The invitation has been sent</string>
 
 </resources>

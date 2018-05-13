@@ -49,20 +49,46 @@ public class InvitationNameAdapter extends RecyclerView.Adapter<InvitationNameAd
 
     @Override
     public void onBindViewHolder(final InvitationNameAdapter.ViewHolder holder, final int position) {
-        mAuth = FirebaseAuth.getInstance();
-        mRef = FirebaseDatabase.getInstance().getReference();
-        mRef.child("user").orderByChild("userID").equalTo((String) invitations.get(position).get("send_uid")).addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                String name = (String) dataSnapshot.getChildren().iterator().next().child("userNickName").getValue();
-                holder.nameTextView.setText(String.format("%s send you an invitation",inviteKeys.get(position)));
-            }
+        long status = (long) invitations.get(position).get("status");
+        if(status == 0L){
+            mAuth = FirebaseAuth.getInstance();
+            mRef = FirebaseDatabase.getInstance().getReference();
+            mRef.child("user").orderByChild("userID").equalTo((String) invitations.get(position).get("send_uid")).addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    final DataSnapshot user_send = dataSnapshot.getChildren().iterator().next();
+                    String name = (String) user_send.child("userNickName").getValue();
+                    final String user_send_authID = user_send.getKey();
+                    final String user_recv_authID = mAuth.getCurrentUser().getUid();
+                    holder.nameTextView.setText(String.format("%s send you an invitation", name));
+                    holder.acceptButton.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            mRef.child("invitation").child(inviteKeys.get(position)).child("status").setValue(1);
+                            invitations.remove(position);
+                            inviteKeys.remove(position);
+                            notifyDataSetChanged();
+                            Log.d("ids", "send : " + user_send_authID + "\n recv: " + user_recv_authID);
+                            mRef.child("user").child(user_recv_authID).child("friendlist").child(user_send_authID).setValue(true);
+                            mRef.child("user").child(user_send_authID).child("friendlist").child(user_recv_authID).setValue(true);
+                        }
+                    });
 
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
+                    holder.declindeButton.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            mRef.child("invitation").child(inviteKeys.get(position)).child("status").setValue(2);
+                            invitations.remove(position);
+                            notifyDataSetChanged();
+                        }
+                    });
+                }
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
 
-            }
-        });
+                }
+            });
+        }
     }
 
 

@@ -115,7 +115,7 @@ public class ProfileFragment extends android.support.v4.app.Fragment implements 
         mSetting = rootView.findViewById(R.id.setting);
 
         final DatabaseReference mUserRef = mRef.child("user");
-        mUserRef.child(mAuth.getCurrentUser().getUid()).addValueEventListener(new ValueEventListener() {
+        mUserRef.child(mAuth.getCurrentUser().getUid()).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 mProfile = dataSnapshot.getValue(UserProfile.class);
@@ -131,16 +131,15 @@ public class ProfileFragment extends android.support.v4.app.Fragment implements 
                 mUserId.setText(String.format("UID: %s", mProfile.getUserID()));
                 History choice = mProfile.getTodayChoice();
                 if(choice == null){
-                    choice = getEmptyHistory();
+                    choice = utils.getEmptyHistory();
                 }
 
                 if(choice.getDateFormated().equals("NULL") || !choice.getDateFormated().equals(utils.parseDate( Calendar.getInstance().getTime())) ){
                     mTodayChoice.setText(R.string.not_decided_yet);
                     if(!choice.getDateFormated().equals("NULL")){
-
                         mProfile.getHistory().add(0,choice);
                         mUserRef.child(mAuth.getCurrentUser().getUid()).child("history").setValue(mProfile.getHistory());
-                        mUserRef.child(mAuth.getCurrentUser().getUid()).child("todayChoice").setValue( choice = getEmptyHistory());
+                        mUserRef.child(mAuth.getCurrentUser().getUid()).child("todayChoice").setValue( choice = utils.getEmptyHistory());
                     }
                 }else{
                     mTodayChoice.setText(String.format("Choice: %s", mProfile.getTodayChoice().getResturant().getName()));
@@ -188,16 +187,7 @@ public class ProfileFragment extends android.support.v4.app.Fragment implements 
                 return resTop3;
             }
 
-            private History getEmptyHistory() {
-                History history = new History();
-                Restaurant restaurant = new Restaurant();
-                restaurant.setName("NULL");
-                restaurant.setVicinity("NULL");
-                history.setResturant(restaurant);
-                history.setDateFormated("NULL");
-                history.setDate(Calendar.getInstance().getTime());
-                return history;
-            }
+
 
             @Override
             public void onCancelled(DatabaseError databaseError) {

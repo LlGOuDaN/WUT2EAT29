@@ -4,6 +4,7 @@ import android.os.Parcel;
 import android.os.Parcelable;
 
 import com.google.firebase.database.Exclude;
+import com.google.firebase.iid.FirebaseInstanceId;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -20,6 +21,7 @@ public class UserProfile implements Parcelable {
     private List<String> vote;
     private String avatarUrl;
     private History todayChoice;
+    private String messageToken;
 
     public UserProfile() {
 
@@ -30,6 +32,7 @@ public class UserProfile implements Parcelable {
         UserID = userID;
         UserNickName = "Default";
         avatarUrl = "https://firebasestorage.googleapis.com/v0/b/wut2eat29.appspot.com/o/default-avatar.png?alt=media&token=6293fd9b-07a2-470a-83c6-47b57cf17d89";
+        messageToken = FirebaseInstanceId.getInstance().getToken();
         this.Top3Choice = new ArrayList<String>();
         this.history = new ArrayList<History>();
         this.vote = new ArrayList<String>();
@@ -114,6 +117,14 @@ public class UserProfile implements Parcelable {
 
     public void setTodayChoice(History todayChoice) {
         this.todayChoice = todayChoice;
+    }
+
+    public String getMessageToken() {
+        return messageToken;
+    }
+
+    public void setMessageToken(String messageToken) {
+        this.messageToken = messageToken;
     }
 
 

@@ -91,8 +91,10 @@ public class InvitationFragment extends Fragment implements View.OnKeyListener {
                         Iterator<DataSnapshot> iterator = dataSnapshot.getChildren().iterator();
                         while(iterator.hasNext()){
                             DataSnapshot current = iterator.next();
-                            invitations.add((HashMap) current.getValue());
-                            inviteKeys.add(current.getKey());
+                            if( ((Long) ((HashMap)current.getValue()).get("status")) == 0L ){
+                                invitations.add((HashMap) current.getValue());
+                                inviteKeys.add(current.getKey());
+                            }
                         }
                         mInvitationAdapter = new InvitationNameAdapter(invitations, inviteKeys);
                         recyclerView.setAdapter(mInvitationAdapter);

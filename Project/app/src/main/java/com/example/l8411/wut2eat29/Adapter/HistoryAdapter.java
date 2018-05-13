@@ -55,6 +55,7 @@ public class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.ViewHold
         private TextView ResName;
         private TextView DateText;
 
+
         public ViewHolder(View itemView) {
             super(itemView);
             ResName = itemView.findViewById(R.id.resName_view);
