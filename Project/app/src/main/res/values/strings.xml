@@ -68,5 +68,7 @@
     <string name="user_does_not_exist">User does not exist!</string>
     <string name="success">Success!</string>
     <string name="invitation_sent">The invitation has been sent</string>
+    <string name="your_today_s_vote_s">Your Today\'s Vote: %s</string>
+
 
 </resources>
