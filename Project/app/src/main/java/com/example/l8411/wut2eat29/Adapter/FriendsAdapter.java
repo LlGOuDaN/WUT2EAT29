@@ -58,6 +58,7 @@ public class FriendsAdapter extends RecyclerView.Adapter<FriendsAdapter.ViewHold
                 if (dataSnapshot.child("todayChoice").getValue() == null) {
                     mRef.child("user").child(uid).child("todayChoice").setValue(utils.getEmptyHistory());
                     holder.placeTextView.setText(R.string.not_decided_yet);
+                    notifyDataSetChanged();
                 }else{
                     HashMap<String, Object> dayOfChoice = (HashMap<String, Object>) dataSnapshot.child("todayChoice").getValue();
                     resturantName = (String) ((HashMap<String, Object>) dayOfChoice.get("resturant")).get("name");
@@ -88,6 +89,7 @@ public class FriendsAdapter extends RecyclerView.Adapter<FriendsAdapter.ViewHold
                     }else{
                         holder.placeTextView.setText(resturantName);
                     }
+                    notifyDataSetChanged();
                 }
                 holder.imageButton.setOnClickListener(new View.OnClickListener() {
                     @Override

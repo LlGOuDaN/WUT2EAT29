@@ -50,11 +50,11 @@ public class MyMessagingService extends FirebaseMessagingService {
                 .setVibrate(new long[] { 10000, 10000});
 
 
-//        Intent resultIntent = new Intent(this, LoginActivity.class);
-//
-//        PendingIntent pendingIntent = PendingIntent.getActivity(this,0,resultIntent,PendingIntent.FLAG_UPDATE_CURRENT);
-//
-//        builder.setContentIntent(pendingIntent);
+        Intent resultIntent = new Intent(this, LoginActivity.class);
+
+        PendingIntent pendingIntent = PendingIntent.getActivity(this,0,resultIntent,PendingIntent.FLAG_UPDATE_CURRENT);
+
+        builder.setContentIntent(pendingIntent);
 
 
 
