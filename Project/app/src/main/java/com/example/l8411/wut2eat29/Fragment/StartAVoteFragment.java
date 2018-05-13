@@ -15,29 +15,22 @@ import android.view.ViewGroup;
 import com.example.l8411.wut2eat29.Activity.MainActivity;
 import com.example.l8411.wut2eat29.Adapter.StartAVoteAdapter;
 import com.example.l8411.wut2eat29.R;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.ChildEventListener;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+
+import java.util.ArrayList;
+import java.util.List;
 
 
-/**
- * A simple {@link Fragment} subclass.
- * Activities that contain this fragment must implement the
- * {@link StartAVoteFragment.OnFragmentInteractionListener} interface
- * to handle interaction events.
- * Use the {@link StartAVoteFragment#newInstance} factory method to
- * create an instance of this fragment.
- */
-public class StartAVoteFragment extends android.support.v4.app.Fragment implements View.OnKeyListener {
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
+
+public class StartAVoteFragment extends android.support.v4.app.Fragment  {
     private StartAVoteAdapter mStartAVoteAdapter;
-
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
-
-    private OnFragmentInteractionListener mListener;
-
+    private FirebaseAuth mAuth;
+    private DatabaseReference mRef;
     public StartAVoteFragment() {
         // Required empty public constructor
     }
@@ -52,91 +45,56 @@ public class StartAVoteFragment extends android.support.v4.app.Fragment implemen
     // TODO: Rename and change types and number of parameters
     public static StartAVoteFragment newInstance() {
         StartAVoteFragment fragment = new StartAVoteFragment();
-//        Bundle args = new Bundle();
-//        args.putString(ARG_PARAM1, param1);
-//        args.putString(ARG_PARAM2, param2);
-//        fragment.setArguments(args);
         return fragment;
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
-        }
+        mAuth = FirebaseAuth.getInstance();
+        mRef = FirebaseDatabase.getInstance().getReference();
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
+        final List<DataSnapshot> friends = new ArrayList<>();
         View StartAVoteView =inflater.inflate(R.layout.fragment_start_avote, container, false);
-        RecyclerView recyclerView = (RecyclerView) StartAVoteView.findViewById(R.id.recycler_view3) ;
+        final RecyclerView recyclerView = (RecyclerView) StartAVoteView.findViewById(R.id.recycler_view3) ;
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         recyclerView.setHasFixedSize(true);
-        mStartAVoteAdapter = new StartAVoteAdapter(getActivity(),recyclerView);
-        recyclerView.setAdapter(mStartAVoteAdapter);
-        recyclerView.setFocusableInTouchMode(true);
-        recyclerView.requestFocus();
-        recyclerView.setOnKeyListener(this);
+        DatabaseReference mUserRef = mRef.child("user").child(mAuth.getCurrentUser().getUid());
+        mUserRef.child("friendlist").addChildEventListener(new ChildEventListener() {
+            @Override
+            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+                friends.add(dataSnapshot);
+                mStartAVoteAdapter = new StartAVoteAdapter(friends);
+                recyclerView.setAdapter(mStartAVoteAdapter);
+            }
+
+            @Override
+            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+
+            }
+
+            @Override
+            public void onChildRemoved(DataSnapshot dataSnapshot) {
+
+            }
+
+            @Override
+            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+
         return StartAVoteView;
     }
 
-    // TODO: Rename method, update argument and hook method into UI event
-    public void onButtonPressed(Uri uri) {
-        if (mListener != null) {
-            mListener.onFragmentInteraction(uri);
-        }
-    }
-
-//    @Override
-//    public void onAttach(Context context) {
-//        super.onAttach(context);
-//        if (context instanceof OnFragmentInteractionListener) {
-//            mListener = (OnFragmentInteractionListener) context;
-//        } else {
-//            throw new RuntimeException(context.toString()
-//                    + " must implement OnFragmentInteractionListener");
-//        }
-//    }
-
-    @Override
-    public void onDetach() {
-        super.onDetach();
-        mListener = null;
-    }
-
-    @Override
-    public boolean onKey(View view, int i, KeyEvent keyEvent) {
-        if (i == KeyEvent.KEYCODE_BACK) {
-            Log.d("back", "back click");
-            MainActivity main = (MainActivity) getContext();
-            getFragmentManager().popBackStack("StartAVote", FragmentManager.POP_BACK_STACK_INCLUSIVE);
-            main.navigationView.setVisibility(View.VISIBLE);
-            if (main.viewPager.getCurrentItem() == 0) {
-                main.findViewById(R.id.search_view).setVisibility(View.VISIBLE);
-                main.findViewById(R.id.fab_here).setVisibility(View.VISIBLE);
-            }
-            return true;
-        }
-        Log.d("back", "back click");
-        return false;
-    }
-
-    /**
-     * This interface must be implemented by activities that contain this
-     * fragment to allow an interaction in this fragment to be communicated
-     * to the activity and potentially other fragments contained in that
-     * activity.
-     * <p>
-     * See the Android Training lesson <a href=
-     * "http://developer.android.com/training/basics/fragments/communicating.html"
-     * >Communicating with Other Fragments</a> for more information.
-     */
-    public interface OnFragmentInteractionListener {
-        // TODO: Update argument type and name
-        void onFragmentInteraction(Uri uri);
-    }
 }

@@ -8,8 +8,14 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.example.l8411.wut2eat29.R;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 
 /**
@@ -17,33 +23,12 @@ import java.util.Random;
  */
 
 public class StartAVoteAdapter extends RecyclerView.Adapter<StartAVoteAdapter.ViewHolder> {
-    private Context mContext;
-    private RecyclerView mRecyclerView;
-    final ArrayList<String> mNames = new ArrayList<>();
-    private Random mRandom = new Random();
-    public StartAVoteAdapter(Context context, RecyclerView RV) {
-        mRecyclerView = RV;
-        mContext = context;
-        for (int i = 0; i < 2; i++) {
-            mNames.add(getRandomName());
-
-        }
+    private List<DataSnapshot> mStartVotes;
+    private DatabaseReference mRef;
+    public StartAVoteAdapter(List<DataSnapshot> mStartVotes) {
+        this.mStartVotes = mStartVotes;
+        mRef = FirebaseDatabase.getInstance().getReference();
     }
-
-
-    private String getRandomName() {
-        String[] names = new String[]{
-                "Junhao Chen", "Yifei Li", "Yilun Wu", "Xin Xiao", "Yuankai Wang",
-                "Coleman Weaver", "", "Hailey", "Alexis", "Elizabeth",
-                "Michael", "Jacob", "Matthew", "Nicholas", "Christopher",
-                "Joseph", "Zachary", "Joshua", "Andrew", "William"
-        };
-        return names[mRandom.nextInt(names.length)];
-    }
-
-
-
-
 
 
 
@@ -54,45 +39,34 @@ public class StartAVoteAdapter extends RecyclerView.Adapter<StartAVoteAdapter.Vi
     }
 
     @Override
-    public void onBindViewHolder(StartAVoteAdapter.ViewHolder holder, int position) {
-        String name = mNames.get(position);
-        holder.nameTextView.setText(name);
-    }
+    public void onBindViewHolder(final StartAVoteAdapter.ViewHolder holder, int position) {
+        mRef.child("user").child(mStartVotes.get(position).getKey()).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                final String name = (String) dataSnapshot.child("userNickName").getValue();
+                holder.nameTextView.setText(name);
+            }
 
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+
+    }
 
     @Override
     public int getItemCount() {
-        return mNames.size();
+        return mStartVotes.size();
     }
 
-
-
-
-    public void addName(){
-        mNames.add(0,getRandomName());
-        notifyItemInserted(0);
-        mRecyclerView.getLayoutManager().scrollToPosition(0);
-
-
-    }
-    public void deleteName(int position) {
-        mNames.remove(position);
-
-        notifyItemRemoved(position);
-    }
 
     public class ViewHolder extends RecyclerView.ViewHolder{
         TextView nameTextView;
 
         public ViewHolder(View view){
             super(view);
-            view.setOnLongClickListener(new View.OnLongClickListener() {
-                @Override
-                public boolean onLongClick(View view) {
-                    deleteName(getAdapterPosition());
-                    return false;
-                }
-            });
+
             nameTextView = (TextView) view.findViewById(R.id.Sname_view);
 
         }
