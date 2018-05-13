@@ -16,6 +16,7 @@ import android.widget.TextView;
 
 import com.example.l8411.wut2eat29.R;
 import com.google.android.gms.common.SignInButton;
+import com.google.firebase.auth.FirebaseAuth;
 
 
 /**
@@ -49,6 +50,7 @@ public class LoginFragment extends Fragment {
         mLoginForm = rootView.findViewById(R.id.login_form);
         mProgressSpinner = rootView.findViewById(R.id.login_progress);
         View loginButton = rootView.findViewById(R.id.email_sign_in_button);
+        View registerButton = rootView.findViewById(R.id.email_register_button);
         mGoogleSignInButton = (SignInButton) rootView.findViewById(R.id.google_sign_in_button);
         mEmailView.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
@@ -76,6 +78,12 @@ public class LoginFragment extends Fragment {
                 login();
             }
         });
+        registerButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                register();
+            }
+        });
         mGoogleSignInButton.setColorScheme(SignInButton.COLOR_LIGHT);
         mGoogleSignInButton.setSize(SignInButton.SIZE_WIDE);
         mGoogleSignInButton.setOnClickListener(new View.OnClickListener() {
@@ -86,6 +94,7 @@ public class LoginFragment extends Fragment {
         });
         return rootView;
     }
+
 
     private void loginWithGoogle() {
         if (mLoggingIn) {
@@ -100,6 +109,28 @@ public class LoginFragment extends Fragment {
         hideKeyboard();
     }
 
+    private void register() {
+
+        mEmailView.setError(null);
+        mPasswordView.setError(null);
+
+        String email = mEmailView.getText().toString().trim();
+        String password = mPasswordView.getText().toString().trim();
+
+        if(email.isEmpty() || !isEmailValid(email)){
+            mEmailView.setError(getString(R.string.invalid_email));
+            return;
+        }
+
+        if(!isPasswordValid(password)){
+            mPasswordView.setError(getString(R.string.invalid_password));
+            return;
+        }
+
+        mListener.onRegister(email, password);
+        hideKeyboard();
+        showProgress(true);
+    }
 
     public void login() {
         if (mLoggingIn) {
@@ -161,6 +192,16 @@ public class LoginFragment extends Fragment {
         mLoggingIn = false;
     }
 
+    public void onRegisterError() {
+        new AlertDialog.Builder(getActivity())
+                .setTitle(getString(R.string.registet_fail))
+                .setMessage("Email already existed! Please signin")
+                .setPositiveButton(android.R.string.ok, null)
+                .create()
+                .show();
+        showProgress(false);
+    }
+
     private void showProgress(boolean show) {
         mProgressSpinner.setVisibility(show ? View.VISIBLE : View.GONE);
         mLoginForm.setVisibility(show ? View.GONE : View.VISIBLE);
@@ -192,8 +233,11 @@ public class LoginFragment extends Fragment {
         mListener = null;
     }
 
+
     public interface OnLoginListener {
         void onLogin(String email, String password);
+
+        void onRegister(String email, String password);
 
         void onGoogleLogin();
     }

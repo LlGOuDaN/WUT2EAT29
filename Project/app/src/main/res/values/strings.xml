@@ -35,6 +35,7 @@
     <string name="not_disturb">Not Disturb</string>
     <string name="free">Free</string>
     <string name="confirm">Confirm</string>
+    <string name="editNickName">Edit Nickname</string>
 
     <!-- Strings related to login -->
     <string name="prompt_email">Email</string>
@@ -60,6 +61,14 @@
     <string name="add_password_title">Add Password</string>
     <string name="add">Add</string>
     <string name="login_with_rosefire">Login with Rosefire</string>
+    <string name="register">Register</string>
+    <string name="registet_fail">Register Failed</string>
+    <string name="not_decided_yet">Not Decided Yet</string>
+    <string name="sorry">Sorry</string>
+    <string name="user_does_not_exist">User does not exist!</string>
+    <string name="success">Success!</string>
+    <string name="invitation_sent">The invitation has been sent</string>
     <string name="your_today_s_vote_s">Your Today\'s Vote: %s</string>
+
 
 </resources>

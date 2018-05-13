@@ -5,11 +5,25 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
 import android.widget.TextView;
 
+import com.example.l8411.wut2eat29.Model.History;
+import com.example.l8411.wut2eat29.Model.Restaurant;
+import com.example.l8411.wut2eat29.Model.UserProfile;
 import com.example.l8411.wut2eat29.R;
+import com.example.l8411.wut2eat29.Utils.utils;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Random;
 
 /**
@@ -17,95 +31,117 @@ import java.util.Random;
  */
 
 public class FriendsAdapter extends RecyclerView.Adapter<FriendsAdapter.ViewHolder> {
-    private Context mContext;
-    private RecyclerView mRecyclerView;
-    final ArrayList<String> mNames = new ArrayList<>();
-    final ArrayList<String> mPlaces = new ArrayList<>();
-    private Random mRandom = new Random();
-    public FriendsAdapter(Context context, RecyclerView RV) {
-        mRecyclerView = RV;
-        mContext = context;
-        for (int i = 0; i < 10; i++) {
-            mNames.add(getRandomName());
-            mPlaces.add(getRandomPlaces());
-        }
+    private List<DataSnapshot> mFriends;
+    private DatabaseReference mRef;
+
+    public FriendsAdapter(List<DataSnapshot> mFriends) {
+        this.mFriends = mFriends;
+        mRef = FirebaseDatabase.getInstance().getReference();
     }
-
-
-    private String getRandomName() {
-        String[] names = new String[]{
-                "Junhao Chen", "Yifei Li", "Yilun Wu", "Xin Xiao", "Yuankai Wang",
-                "Coleman Weaver", "", "Hailey", "Alexis", "Elizabeth",
-                "Michael", "Jacob", "Matthew", "Nicholas", "Christopher",
-                "Joseph", "Zachary", "Joshua", "Andrew", "William"
-        };
-        return names[mRandom.nextInt(names.length)];
-    }
-
-    private String getRandomPlaces() {
-        String[] places = new String[]{
-                "McDonald", "Burger King", "Chauncey", "Texas RoadHouse", "Zeng",
-                "Umi", "Tokyo", "Panda Garden", "Cafeteria", "Wendy",
-                "Buffalo Wild Wings", "LongHorn Steak House", "Arby", "Fifi's", "Royal Mandrin",
-                "Rickey's", "Square Donuts", "Chavas", "Pizza King", "J Gumbo's"
-        };
-        return places[mRandom.nextInt(places.length)];
-    }
-
-
-
 
 
     @Override
     public FriendsAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View itemView = LayoutInflater.from(parent.getContext()).inflate(R.layout.friend_name_view,parent,false);
+        View itemView = LayoutInflater.from(parent.getContext()).inflate(R.layout.friend_name_view, parent, false);
         return new ViewHolder(itemView);
     }
 
     @Override
-    public void onBindViewHolder(FriendsAdapter.ViewHolder holder, int position) {
-        String name = mNames.get(position);
-        String place = mPlaces.get(position);
-        holder.nameTextView.setText(name);
-        holder.placeTextView.setText(place);
+    public void onBindViewHolder(final FriendsAdapter.ViewHolder holder, final int position) {
+        mRef.child("user").child(mFriends.get(position).getKey()).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(final DataSnapshot dataSnapshot) {
+                String resturantName, dateFormated;
+                final String name = (String) dataSnapshot.child("userNickName").getValue();
+                holder.nameTextView.setText(name);
+                final String uid = dataSnapshot.getKey();
+                if (dataSnapshot.child("todayChoice").getValue() == null) {
+                    mRef.child("user").child(uid).child("todayChoice").setValue(utils.getEmptyHistory());
+                    holder.placeTextView.setText(R.string.not_decided_yet);
+                }else{
+                    HashMap<String, Object> dayOfChoice = (HashMap<String, Object>) dataSnapshot.child("todayChoice").getValue();
+                    resturantName = (String) ((HashMap<String, Object>) dayOfChoice.get("resturant")).get("name");
+                    dateFormated = (String) dayOfChoice.get("dateFormated");
+                    if(resturantName.equals("NULL") ||  !dateFormated.equals(utils.parseDate( Calendar.getInstance().getTime()))){
+                        holder.placeTextView.setText(R.string.not_decided_yet);
+                        if(!resturantName.equals("NULL")){
+                            mRef.child("user").child(uid).addListenerForSingleValueEvent(new ValueEventListener() {
+                                @Override
+                                public void onDataChange(DataSnapshot dataSnapshot) {
+                                    UserProfile mProfile =  dataSnapshot.getValue(UserProfile.class);
+                                    if(mProfile.getHistory() == null){
+                                        mProfile.setHistory(new ArrayList<History>());
+                                    }
+                                    mProfile.getHistory().add(0, dataSnapshot.child("todayChoice").getValue(History.class));
+                                    mRef.child("user").child(uid).child("history").setValue(mProfile.getHistory());
+                                    mRef.child("user").child(uid).child("todayChoice").setValue(utils.getEmptyHistory());
+
+                                }
+
+                                @Override
+                                public void onCancelled(DatabaseError databaseError) {
+
+                                }
+                            });
+
+                        }
+                    }else{
+                        holder.placeTextView.setText(resturantName);
+                    }
+                }
+                holder.imageButton.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        HashMap<String, String> notificationData = new HashMap<>();
+                        notificationData.put("sent_authId", FirebaseAuth.getInstance().getCurrentUser().getUid());
+                        mRef.child("notification").child(uid).push().setValue(notificationData);
+                    }
+                });
+
+
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+
+
+
+
+
     }
 
 
     @Override
     public int getItemCount() {
-        return mNames.size();
+        return mFriends.size();
     }
 
 
+    public void deleteFriend(int position) {
 
-
-    public void addName(){
-        mNames.add(0,getRandomName());
-        notifyItemInserted(0);
-        mRecyclerView.getLayoutManager().scrollToPosition(0);
-
-
-    }
-    public void deleteName(int position) {
-        mNames.remove(position);
-        
         notifyItemRemoved(position);
     }
 
-    public class ViewHolder extends RecyclerView.ViewHolder{
+    public class ViewHolder extends RecyclerView.ViewHolder {
         TextView nameTextView;
         TextView placeTextView;
-        public ViewHolder(View view){
+        ImageButton imageButton;
+
+        public ViewHolder(View view) {
             super(view);
             view.setOnLongClickListener(new View.OnLongClickListener() {
                 @Override
                 public boolean onLongClick(View view) {
-                    deleteName(getAdapterPosition());
+                    deleteFriend(getAdapterPosition());
                     return false;
                 }
             });
-            nameTextView = (TextView) view.findViewById(R.id.name_view);
-            placeTextView = (TextView) view.findViewById(R.id.place_view);
+            nameTextView = view.findViewById(R.id.name_view);
+            placeTextView = view.findViewById(R.id.place_view);
+            imageButton = view.findViewById(R.id.imageButton);
         }
     }
 }

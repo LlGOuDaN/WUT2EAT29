@@ -15,6 +15,17 @@ import android.view.ViewGroup;
 import com.example.l8411.wut2eat29.Activity.MainActivity;
 import com.example.l8411.wut2eat29.Adapter.InvitationNameAdapter;
 import com.example.l8411.wut2eat29.R;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
 
 
 /**
@@ -26,14 +37,10 @@ import com.example.l8411.wut2eat29.R;
  * create an instance of this fragment.
  */
 public class InvitationFragment extends Fragment implements View.OnKeyListener {
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
+
     private InvitationNameAdapter mInvitationAdapter;
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
+    private DatabaseReference mRef;
+    private FirebaseAuth mAuth;
 
 
     public InvitationFragment() {
@@ -57,24 +64,56 @@ public class InvitationFragment extends Fragment implements View.OnKeyListener {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
-        }
+        mRef = FirebaseDatabase.getInstance().getReference();
+        mAuth = FirebaseAuth.getInstance();
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+    public View onCreateView(final LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View invitationNameView =inflater.inflate(R.layout.fragment_invitation, container, false);
-        RecyclerView recyclerView = (RecyclerView) invitationNameView.findViewById(R.id.recycler_view2) ;
+        final RecyclerView recyclerView = (RecyclerView) invitationNameView.findViewById(R.id.recycler_view2) ;
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         recyclerView.setHasFixedSize(true);
-        mInvitationAdapter = new InvitationNameAdapter(getActivity(),recyclerView);
-        recyclerView.setAdapter(mInvitationAdapter);
-        recyclerView.setFocusableInTouchMode(true);
-        recyclerView.requestFocus();
+        //firebase stuff
+        DatabaseReference mUserRef = mRef.child("user");
+        mUserRef.child(mAuth.getCurrentUser().getUid()).addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                final List<HashMap> invitations = new ArrayList<>();
+                final List<String> inviteKeys = new ArrayList<>();
+                String userId = (String) dataSnapshot.child("userID").getValue();
+                DatabaseReference mInvitationRef = mRef.child("invitation");
+                mInvitationRef.orderByChild("recv_uid").equalTo(userId).addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        Iterator<DataSnapshot> iterator = dataSnapshot.getChildren().iterator();
+                        while(iterator.hasNext()){
+                            DataSnapshot current = iterator.next();
+                            if( ((Long) ((HashMap)current.getValue()).get("status")) == 0L ){
+                                invitations.add((HashMap) current.getValue());
+                                inviteKeys.add(current.getKey());
+                            }
+                        }
+                        mInvitationAdapter = new InvitationNameAdapter(invitations, inviteKeys);
+                        recyclerView.setAdapter(mInvitationAdapter);
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+
+                    }
+                });
+                recyclerView.setFocusableInTouchMode(true);
+                recyclerView.requestFocus();
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
         recyclerView.setOnKeyListener(this);
         Log.d("WTE","ON create invitation fragment");
         return invitationNameView;
@@ -88,27 +127,12 @@ public class InvitationFragment extends Fragment implements View.OnKeyListener {
             main.navigationView.setVisibility(View.VISIBLE);
             if (main.viewPager.getCurrentItem() == 0) {
                 main.findViewById(R.id.search_view).setVisibility(View.VISIBLE);
+                main.findViewById(R.id.fab_here).setVisibility(View.VISIBLE);
             }
             return true;
         }
         Log.d("back", "back click");
         return false;
     }
-    // TODO: Rename method, update argument and hook method into UI event
-
-
-
-
-
-    /**
-     * This interface must be implemented by activities that contain this
-     * fragment to allow an interaction in this fragment to be communicated
-     * to the activity and potentially other fragments contained in that
-     * activity.
-     * <p>
-     * See the Android Training lesson <a href=
-     * "http://developer.android.com/training/basics/fragments/communicating.html"
-     * >Communicating with Other Fragments</a> for more information.
-     */
 
 }

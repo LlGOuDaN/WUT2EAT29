@@ -10,7 +10,18 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.example.l8411.wut2eat29.Adapter.HistoryAdapter;
+import com.example.l8411.wut2eat29.Model.History;
 import com.example.l8411.wut2eat29.R;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -24,6 +35,8 @@ public class HistoryFragment extends Fragment {
 
     // TODO: Rename and change types of parameters
     private String UID;
+    private DatabaseReference mRef;
+    private FirebaseAuth mAuth;
 
     public HistoryFragment() {
         // Required empty public constructor
@@ -54,15 +67,33 @@ public class HistoryFragment extends Fragment {
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+    public View onCreateView(final LayoutInflater inflater, final ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View view = inflater.inflate(R.layout.fragment_history, container, false);
-        RecyclerView recyclerView = view.findViewById(R.id.recycler_view);
-        recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
-        recyclerView.setHasFixedSize(true);
-        HistoryAdapter adapter = new HistoryAdapter();
-        recyclerView.setAdapter(adapter);
+        final View view = inflater.inflate(R.layout.fragment_history, container, false);
+        final RecyclerView recyclerView = view.findViewById(R.id.recycler_view);
+        mRef = FirebaseDatabase.getInstance().getReference();
+        mAuth = FirebaseAuth.getInstance();
+        DatabaseReference mUserRef = mRef.child("user").child(mAuth.getCurrentUser().getUid());
+        mUserRef.child("history").addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                List<HashMap> historyList = (List<HashMap>) dataSnapshot.getValue();
+                if(historyList == null){
+                    historyList = new ArrayList<HashMap>();
+                }
+                recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+                recyclerView.setHasFixedSize(true);
+                HistoryAdapter adapter = new HistoryAdapter(historyList);
+                recyclerView.setAdapter(adapter);
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+
         return view;
     }
 

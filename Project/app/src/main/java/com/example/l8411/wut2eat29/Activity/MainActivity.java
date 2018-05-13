@@ -1,13 +1,16 @@
 package com.example.l8411.wut2eat29.Activity;
 
 import android.Manifest;
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -30,15 +33,20 @@ import com.example.l8411.wut2eat29.Fragment.InvitationFragment;
 import com.example.l8411.wut2eat29.Fragment.BottomNavi.ProfileFragment;
 import com.example.l8411.wut2eat29.Fragment.StartAVoteFragment;
 import com.example.l8411.wut2eat29.GooglePlaces.GetNearbyPlacesData;
+import com.example.l8411.wut2eat29.Model.History;
+import com.example.l8411.wut2eat29.Model.Restaurant;
 import com.example.l8411.wut2eat29.R;
-import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
-import com.google.android.gms.maps.model.BitmapDescriptorFactory;
-import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
-import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.iid.FirebaseInstanceId;
+import com.pushbots.push.Pushbots;
+
+import java.util.Calendar;
 
 public class MainActivity extends AppCompatActivity implements OnMapReadyCallback, ViewPager.OnPageChangeListener, SearchView.OnQueryTextListener {
 
@@ -56,6 +64,10 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     private String previousFrag;
     private SearchView searchView;
     private String keyWord;
+    private FloatingActionButton fab_here;
+    private Restaurant choice = null;
+    private DatabaseReference mRef;
+    private FirebaseAuth mAuth;
 
 
     @Override
@@ -63,14 +75,17 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_maps);
         previousFrag = "";
-        keyWord = "royal mandarin";
+        keyWord = "food";
+        fab_here = this.findViewById(R.id.fab_here);
         searchView = this.findViewById(R.id.search_view);
         fragmentManager = getSupportFragmentManager();
         navigationPagerAdapter = new NavigationPagerAdapter(fragmentManager);
         viewPager = this.findViewById(R.id.container);
         viewPager.setAdapter(navigationPagerAdapter);
         viewPager.addOnPageChangeListener(this);
-
+        mRef = FirebaseDatabase.getInstance().getReference();
+        mAuth = FirebaseAuth.getInstance();
+        mRef.child("user").child(mAuth.getCurrentUser().getUid()).child("messageToken").setValue(FirebaseInstanceId.getInstance().getToken());
 
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(MainActivity.this,
@@ -83,13 +98,40 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         }
 
 
-
         //enable BottomNavigationView here
         navigationView = findViewById(R.id.navigation);
         navigationView.setOnNavigationItemSelectedListener(this.mOnNavigationItemSelectedListener);
 
         //search View
         searchView.setOnQueryTextListener(this);
+
+        //fab_here
+        fab_here.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+                builder.setTitle("You Choice of Day");
+                if (choice != null) {
+                    builder.setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int i) {
+                            FirebaseAuth mAuth = FirebaseAuth.getInstance();
+                            DatabaseReference mRef = FirebaseDatabase.getInstance().getReference();
+                            History dayOfChoice = new History(choice, Calendar.getInstance().getTime());
+                            mRef.child("user").child(mAuth.getCurrentUser().getUid()).child("todayChoice").setValue(dayOfChoice);
+                        }
+                    });
+                    builder.setNegativeButton(android.R.string.cancel, null);
+                    builder.setMessage(choice.getName() + "\n" + choice.getVicinity() + "\nAre you sure?");
+                } else {
+                    builder.setMessage("Please make a choice first.");
+                }
+
+                builder.create().show();
+            }
+        });
+
+
     }
 
 
@@ -104,14 +146,17 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                     mMapFragment = (SupportMapFragment) navigationPagerAdapter.getItem(0);
                     mMapFragment.getMapAsync(MainActivity.this);
                     MainActivity.this.findViewById(R.id.search_view).setVisibility(View.VISIBLE);
+                    MainActivity.this.findViewById(R.id.fab_here).setVisibility(View.VISIBLE);
                     viewPager.setCurrentItem(0);
                     return true;
                 case R.id.navigation_friend:
                     MainActivity.this.findViewById(R.id.search_view).setVisibility(View.GONE);
+                    MainActivity.this.findViewById(R.id.fab_here).setVisibility(View.GONE);
                     viewPager.setCurrentItem(1);
                     return true;
                 case R.id.navigation_profile:
                     MainActivity.this.findViewById(R.id.search_view).setVisibility(View.GONE);
+                    MainActivity.this.findViewById(R.id.fab_here).setVisibility(View.GONE);
                     viewPager.setCurrentItem(2);
                     return true;
             }
@@ -151,17 +196,24 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         }
 
 
-        LatLng mPosition = new LatLng(Lat, log);
-        Marker marker = mMap.addMarker(new MarkerOptions().position(mPosition).title("Marker my position").draggable(true).icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN)));
-        marker.showInfoWindow();
-        mMap.moveCamera(CameraUpdateFactory.newLatLng(mPosition));
-
         String url = gerUrl(Lat, log, keyWord);
         Object dataTransfer[] = {googleMap, url};
         GetNearbyPlacesData getNearbyPlacesData = new GetNearbyPlacesData();
         getNearbyPlacesData.execute(dataTransfer);
 
+        mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
+            @Override
+            public boolean onMarkerClick(Marker marker) {
+                if (marker.isInfoWindowShown()) {
+                    marker.hideInfoWindow();
+                } else {
+                    choice = new Restaurant(marker.getTitle(), marker.getSnippet());
+                    marker.showInfoWindow();
+                }
 
+                return true;
+            }
+        });
     }
 
     private String gerUrl(double lat, double log, String keyword) {
@@ -194,12 +246,13 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
             previousFrag = "AddContact";
             navigationView.setVisibility(View.GONE);
             MainActivity.this.findViewById(R.id.search_view).setVisibility(View.GONE);
+            MainActivity.this.findViewById(R.id.fab_here).setVisibility(View.GONE);
             viewPager.setVisibility(View.GONE);
             return true;
         }
 
         if (id == R.id.action_startVote) {
-            mStartAVoteFragment =new StartAVoteFragment();
+            mStartAVoteFragment = new StartAVoteFragment();
             FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
             fm.popBackStack(previousFrag, FragmentManager.POP_BACK_STACK_INCLUSIVE);
             ft.add(R.id.fragment_container, mStartAVoteFragment).commit();
@@ -207,18 +260,20 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
             previousFrag = "StartAVote";
             navigationView.setVisibility(View.GONE);
             MainActivity.this.findViewById(R.id.search_view).setVisibility(View.GONE);
+            MainActivity.this.findViewById(R.id.fab_here).setVisibility(View.GONE);
             return true;
         }
 
         if (id == R.id.action_Invitation) {
-            mInvitationFragment =new InvitationFragment();
+            mInvitationFragment = new InvitationFragment();
             FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-            fm.popBackStack(previousFrag,FragmentManager.POP_BACK_STACK_INCLUSIVE);
+            fm.popBackStack(previousFrag, FragmentManager.POP_BACK_STACK_INCLUSIVE);
             ft.add(R.id.fragment_container, mInvitationFragment).commit();
             ft.addToBackStack("Invitation");
             previousFrag = "Invitation";
             navigationView.setVisibility(View.GONE);
             MainActivity.this.findViewById(R.id.search_view).setVisibility(View.GONE);
+            MainActivity.this.findViewById(R.id.fab_here).setVisibility(View.GONE);
             return true;
         }
 
@@ -230,11 +285,11 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
 
-        if(requestCode == 1){
-            if(grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED){
+        if (requestCode == 1) {
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 mMapFragment = (SupportMapFragment) navigationPagerAdapter.getItem(0);
                 mMapFragment.getMapAsync(this);
-            }else{
+            } else {
                 finish();
                 System.exit(0);
             }
@@ -249,7 +304,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
     @Override
     public void onPageSelected(int position) {
-        if(position < 3){
+        if (position < 3) {
             navigationView.setSelectedItemId(navigationView.getMenu().getItem(position).getItemId());
         }
     }
@@ -271,3 +326,4 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         return false;
     }
 }
+
