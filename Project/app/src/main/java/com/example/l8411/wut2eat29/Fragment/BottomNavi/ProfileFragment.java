@@ -10,6 +10,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.provider.ContactsContract;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.app.FragmentManager;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -22,6 +23,8 @@ import com.example.l8411.wut2eat29.Activity.SettingsActivity;
 import com.example.l8411.wut2eat29.Fragment.HistoryFragment;
 import com.example.l8411.wut2eat29.Model.History;
 import com.example.l8411.wut2eat29.Model.Restaurant;
+import com.example.l8411.wut2eat29.Fragment.ViewVoteFragment;
+
 import com.example.l8411.wut2eat29.Model.UserProfile;
 import com.example.l8411.wut2eat29.R;
 import com.example.l8411.wut2eat29.Utils.utils;
@@ -213,6 +216,8 @@ public class ProfileFragment extends android.support.v4.app.Fragment implements 
         }
         if(id == R.id.view_votes){
             Log.d("Votes", "click");
+            ft.add(R.id.fragment_container, ViewVoteFragment.newInstance("UID")).commit();
+            ft.addToBackStack("Votes");
             return;
         }
         if(id == R.id.setting){

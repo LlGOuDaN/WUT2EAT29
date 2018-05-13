@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.example.l8411.wut2eat29.Fragment.ViewVoteFragment"
+    android:background="@color/colorWhite">
+
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="100dp"
+        android:text="@string/your_today_s_vote_s"
+        android:id="@+id/view_vote_top_text"
+        android:textSize="25sp"
+        android:paddingHorizontal="10dp"
+        android:paddingVertical="20dp"
+        android:background="@drawable/textview_border"
+        />
+
+    <android.support.v7.widget.RecyclerView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/view_vote_recycler_view"
+        android:layout_marginTop="100dp"/>
+
+</FrameLayout>
