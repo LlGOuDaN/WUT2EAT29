@@ -217,7 +217,7 @@ public class ProfileFragment extends android.support.v4.app.Fragment implements 
         }
         if(id == R.id.view_votes){
             Log.d("Votes", "click");
-            ft.add(R.id.fragment_container, ViewVoteFragment.newInstance("UID")).commit();
+            ft.add(R.id.fragment_container, ViewVoteFragment.newInstance()).commit();
             ft.addToBackStack("Votes");
             return;
         }
