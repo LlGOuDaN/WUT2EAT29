@@ -149,6 +149,7 @@ public class ProfileFragment extends android.support.v4.app.Fragment implements 
                 }
 
                 new GetImageTask().execute(mProfile.getAvatarUrl());
+
             }
 
             private ArrayList<String> getTopThreeChoice(List<History> history) {
@@ -229,7 +230,7 @@ public class ProfileFragment extends android.support.v4.app.Fragment implements 
     }
 
     @Override
-    public boolean onLongClick(View view) {
+    public boolean onLongClick(final View view) {
         Log.d("long", R.id.view_user + "" + view.getId() + "");
         if(view.getId() == R.id.view_user){
             AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
@@ -243,6 +244,7 @@ public class ProfileFragment extends android.support.v4.app.Fragment implements 
                 public void onClick(DialogInterface dialogInterface, int i) {
                     String newNickName = editText.getText().toString();
                     mRef.child("user").child(mAuth.getCurrentUser().getUid()).child("userNickName").setValue(newNickName);
+                    mNickName.setText(newNickName);
                 }
             });
 

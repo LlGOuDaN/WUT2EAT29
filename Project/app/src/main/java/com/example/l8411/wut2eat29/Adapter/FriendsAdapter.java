@@ -2,6 +2,7 @@ package com.example.l8411.wut2eat29.Adapter;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -58,7 +59,6 @@ public class FriendsAdapter extends RecyclerView.Adapter<FriendsAdapter.ViewHold
                 if (dataSnapshot.child("todayChoice").getValue() == null) {
                     mRef.child("user").child(uid).child("todayChoice").setValue(utils.getEmptyHistory());
                     holder.placeTextView.setText(R.string.not_decided_yet);
-                    notifyDataSetChanged();
                 }else{
                     HashMap<String, Object> dayOfChoice = (HashMap<String, Object>) dataSnapshot.child("todayChoice").getValue();
                     resturantName = (String) ((HashMap<String, Object>) dayOfChoice.get("resturant")).get("name");
@@ -89,7 +89,6 @@ public class FriendsAdapter extends RecyclerView.Adapter<FriendsAdapter.ViewHold
                     }else{
                         holder.placeTextView.setText(resturantName);
                     }
-                    notifyDataSetChanged();
                 }
                 holder.imageButton.setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -99,8 +98,6 @@ public class FriendsAdapter extends RecyclerView.Adapter<FriendsAdapter.ViewHold
                         mRef.child("notification").child(uid).push().setValue(notificationData);
                     }
                 });
-
-
             }
 
             @Override
@@ -108,9 +105,6 @@ public class FriendsAdapter extends RecyclerView.Adapter<FriendsAdapter.ViewHold
 
             }
         });
-
-
-
 
 
     }
