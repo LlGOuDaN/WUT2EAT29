@@ -17,6 +17,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Random;
 
@@ -27,16 +28,22 @@ import java.util.Random;
 public class StartAVoteAdapter extends RecyclerView.Adapter<StartAVoteAdapter.ViewHolder> {
     private List<DataSnapshot> mStartVotes;
     private DatabaseReference mRef;
+    private HashMap<String,String> nameToKey;
 
     public List<String> getmVoteList() {
-        return mVoteList;
+        List<String> keyList = new ArrayList<>();
+        for(String name : mVoteList){
+            keyList.add(nameToKey.get(name));
+        }
+        return keyList;
     }
 
     private List<String> mVoteList;
     public StartAVoteAdapter(List<DataSnapshot> mStartVotes) {
         this.mStartVotes = mStartVotes;
         mRef = FirebaseDatabase.getInstance().getReference();
-        mVoteList = new ArrayList<String>();
+        mVoteList = new ArrayList<>();
+        nameToKey = new HashMap<>();
     }
 
 
@@ -53,7 +60,10 @@ public class StartAVoteAdapter extends RecyclerView.Adapter<StartAVoteAdapter.Vi
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 final String name = (String) dataSnapshot.child("userNickName").getValue();
+                final String userKey = (String) dataSnapshot.getKey();
+                nameToKey.put(name,userKey);
                 holder.nameTextView.setText(name);
+
             }
 
             @Override

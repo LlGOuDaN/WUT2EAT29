@@ -129,7 +129,13 @@ public class StartAVoteFragment extends android.support.v4.app.Fragment  {
                             }
                             mVote.setVoteDetails(mvoteDetails);
                             DatabaseReference voteRef = mRef.child("votes");
-                            voteRef.push().setValue(mVote);
+                            String voteID = voteRef.push().getKey();
+                            voteRef.child(voteID).setValue(mVote);
+                            mUserRef.child("voteList").child(voteID).setValue(true);
+                            for(String userid : nameList){
+                                mRef.child("user").child(userid).child("voteList").child(voteID).setValue(false);
+                            }
+
 
                         }
                     });

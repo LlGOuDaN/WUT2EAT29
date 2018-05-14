@@ -15,35 +15,31 @@ import android.widget.TextView;
 import com.example.l8411.wut2eat29.Adapter.HistoryAdapter;
 import com.example.l8411.wut2eat29.Adapter.ViewVoteAdapter;
 import com.example.l8411.wut2eat29.R;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
 /**
  * A simple {@link Fragment} subclass.
  */
 public class ViewVoteFragment extends Fragment {
-
-    private static final String ARG_UID = "UID";
-
-    // TODO: Rename and change types of parameters
-    private String UID;
+    private FirebaseAuth mAuth;
+    private DatabaseReference mRef;
 
     public ViewVoteFragment() {
         // Required empty public constructor
     }
 
-    public static ViewVoteFragment newInstance(String UID){
+    public static ViewVoteFragment newInstance(){
         ViewVoteFragment fragment = new ViewVoteFragment();
-        Bundle args = new Bundle();
-        args.putString(ARG_UID,UID);
-        fragment.setArguments(args);
         return fragment;
     }
 
     @Override
     public void onCreate( Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            UID = getArguments().getString(ARG_UID);
-        }
+        mAuth = FirebaseAuth.getInstance();
+        mRef = FirebaseDatabase.getInstance().getReference();
     }
 
     @Override
@@ -56,7 +52,7 @@ public class ViewVoteFragment extends Fragment {
         RecyclerView recyclerView = view.findViewById(R.id.view_vote_recycler_view);
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         recyclerView.setHasFixedSize(true);
-        ViewVoteAdapter adapter = new ViewVoteAdapter();
+        ViewVoteAdapter adapter = new ViewVoteAdapter(mRef,mAuth);
         recyclerView.setAdapter(adapter);
         return view;
     }
