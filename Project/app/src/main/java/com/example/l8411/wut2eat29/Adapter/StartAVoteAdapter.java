@@ -5,6 +5,8 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.TextView;
 
 import com.example.l8411.wut2eat29.R;
@@ -25,9 +27,16 @@ import java.util.Random;
 public class StartAVoteAdapter extends RecyclerView.Adapter<StartAVoteAdapter.ViewHolder> {
     private List<DataSnapshot> mStartVotes;
     private DatabaseReference mRef;
+
+    public List<String> getmVoteList() {
+        return mVoteList;
+    }
+
+    private List<String> mVoteList;
     public StartAVoteAdapter(List<DataSnapshot> mStartVotes) {
         this.mStartVotes = mStartVotes;
         mRef = FirebaseDatabase.getInstance().getReference();
+        mVoteList = new ArrayList<String>();
     }
 
 
@@ -53,6 +62,8 @@ public class StartAVoteAdapter extends RecyclerView.Adapter<StartAVoteAdapter.Vi
             }
         });
 
+
+
     }
 
     @Override
@@ -63,12 +74,26 @@ public class StartAVoteAdapter extends RecyclerView.Adapter<StartAVoteAdapter.Vi
 
     public class ViewHolder extends RecyclerView.ViewHolder{
         TextView nameTextView;
-
+        CheckBox mCheckbox;
         public ViewHolder(View view){
             super(view);
 
             nameTextView = (TextView) view.findViewById(R.id.Sname_view);
-
+            mCheckbox = (CheckBox) view.findViewById(R.id.checkBox);
+            mCheckbox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                @Override
+                public void onCheckedChanged(CompoundButton compoundButton, boolean isChecked) {
+                    if(isChecked){
+                        if(!mVoteList.contains(nameTextView.getText().toString())){
+                            mVoteList.add(nameTextView.getText().toString());
+                        }
+                    }else{
+                        if(mVoteList.contains(nameTextView.getText().toString())){
+                            mVoteList.remove(nameTextView.getText().toString());
+                        }
+                    }
+                }
+            });
         }
     }
 }

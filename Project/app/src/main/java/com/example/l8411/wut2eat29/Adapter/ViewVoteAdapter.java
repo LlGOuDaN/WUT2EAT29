@@ -28,7 +28,7 @@ public class ViewVoteAdapter extends RecyclerView.Adapter<ViewVoteAdapter.ViewHo
     Integer[] mVoterStatus;
 
     public ViewVoteAdapter() {
-        this.mVote = new Vote("TestVote",null,new HashMap<String, Integer>());
+        this.mVote = new Vote();
         this.mVoteDetails = mVote.getVoteDetails();
         mVoteDetails.put("Arthur",1);
         mVoteDetails.put("Goudan Li",2);

@@ -1,8 +1,11 @@
 package com.example.l8411.wut2eat29.Fragment;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.net.Uri;
 import android.os.Bundle;
 import android.app.Fragment;
+import android.provider.ContactsContract;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -11,9 +14,15 @@ import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.Toast;
 
 import com.example.l8411.wut2eat29.Activity.MainActivity;
 import com.example.l8411.wut2eat29.Adapter.StartAVoteAdapter;
+import com.example.l8411.wut2eat29.Model.History;
+import com.example.l8411.wut2eat29.Model.Restaurant;
+import com.example.l8411.wut2eat29.Model.Vote;
 import com.example.l8411.wut2eat29.R;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.ChildEventListener;
@@ -23,6 +32,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 
@@ -64,7 +74,7 @@ public class StartAVoteFragment extends android.support.v4.app.Fragment  {
         final RecyclerView recyclerView = (RecyclerView) StartAVoteView.findViewById(R.id.recycler_view3) ;
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         recyclerView.setHasFixedSize(true);
-        DatabaseReference mUserRef = mRef.child("user").child(mAuth.getCurrentUser().getUid());
+        final DatabaseReference mUserRef = mRef.child("user").child(mAuth.getCurrentUser().getUid());
         mUserRef.child("friendlist").addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
@@ -93,7 +103,47 @@ public class StartAVoteFragment extends android.support.v4.app.Fragment  {
 
             }
         });
+        Button confirmButton = StartAVoteView.findViewById(R.id.confirmStartVote);
+        confirmButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                DatabaseReference todayChoice = mUserRef.child("todayChoice");
+                if(todayChoice.child("dateFormated").equals("NULL")
+                        || todayChoice.child("resturant").child("name").equals("NULL")){
+                    Toast.makeText(getActivity(), "Please choose a resturant before you start a vote.",
+                            Toast.LENGTH_SHORT).show();
+                }else{
+                    AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+                    builder.setTitle(getString(R.string.which_resturant));
+                    final EditText editText = new EditText(getContext());
+                    builder.setView(editText);
+                    builder.setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int i) {
+                            String mResturant = editText.getText().toString();
+                            Vote mVote = new Vote(mResturant);
+                            List<String> nameList = mStartAVoteAdapter.getmVoteList();
+                            HashMap<String,Integer> mvoteDetails = new HashMap<>();
+                            for( String name : nameList){
+                                mvoteDetails.put(name, 0);
+                            }
+                            mVote.setVoteDetails(mvoteDetails);
+                            DatabaseReference voteRef = mRef.child("votes");
+                            voteRef.push().setValue(mVote);
 
+                        }
+                    });
+
+                    builder.setNegativeButton(android.R.string.cancel, null);
+                    builder.create().show();
+
+
+
+
+
+                }
+            }
+        });
         return StartAVoteView;
     }
 
