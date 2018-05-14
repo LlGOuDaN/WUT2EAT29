@@ -6,9 +6,12 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.provider.ContactsContract;
+import android.provider.MediaStore;
+import android.support.annotation.NonNull;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.app.FragmentManager;
 import android.util.Log;
@@ -28,13 +31,19 @@ import com.example.l8411.wut2eat29.Fragment.ViewVoteFragment;
 import com.example.l8411.wut2eat29.Model.UserProfile;
 import com.example.l8411.wut2eat29.R;
 import com.example.l8411.wut2eat29.Utils.utils;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
@@ -54,6 +63,7 @@ public class ProfileFragment extends android.support.v4.app.Fragment implements 
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PROFILE = "profile";
+    private static final int RC_CHOOSE_PICTURE = 1;
 
     // TODO: Rename and change types of parameters
     private Bitmap bitmap;
@@ -247,11 +257,55 @@ public class ProfileFragment extends android.support.v4.app.Fragment implements 
                     mNickName.setText(newNickName);
                 }
             });
-
+            builder.setNeutralButton("Upload a Avatar", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialogInterface, int i) {
+                    Intent choosePictureIntent = new Intent(Intent.ACTION_PICK,
+                            MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+                    if (choosePictureIntent.resolveActivity(getContext().getPackageManager()) != null) {
+                        startActivityForResult(choosePictureIntent, RC_CHOOSE_PICTURE);
+                    }
+                }
+            });
             builder.setNegativeButton(android.R.string.cancel, null);
             builder.create().show();
         }
         return false;
+    }
+
+
+    @Override
+    public void onActivityResult(final int requestCode, final int resultCode, final Intent data) {
+        StorageReference storageReference = FirebaseStorage.getInstance().getReference().child("Avatar");
+        if (requestCode == RC_CHOOSE_PICTURE){
+            if (data != null && data.getData() != null) {
+                Uri uri = data.getData();
+                try {
+                    Bitmap bitmap = MediaStore.Images.Media.getBitmap(getActivity().getContentResolver(), uri);
+                    String picDatabaseKey = mAuth.getCurrentUser().getUid();
+                    ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                    bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
+                    byte[] uploadData = baos.toByteArray();
+                    UploadTask uploadTask = storageReference.child(picDatabaseKey).putBytes(uploadData);
+                    uploadTask.addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception e) {
+                            Log.d("Error", "upload failed");
+                        }
+                    });
+
+                    uploadTask.addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                        @Override
+                        public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                            mRef.child("user").child(mAuth.getCurrentUser().getUid()).child("avatarUrl").setValue(taskSnapshot.getDownloadUrl().toString());
+                        }
+                    });
+
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
     }
 
     class GetImageTask extends AsyncTask<String,Void,Void> {
