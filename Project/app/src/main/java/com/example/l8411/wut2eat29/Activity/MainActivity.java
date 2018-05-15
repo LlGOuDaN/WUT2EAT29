@@ -18,6 +18,7 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 
 import android.support.v4.view.ViewPager;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.SearchView;
 import android.util.Log;
@@ -28,6 +29,7 @@ import android.view.View;
 import com.example.l8411.wut2eat29.Adapter.NavigationPagerAdapter;
 
 import com.example.l8411.wut2eat29.Fragment.AddContactFragment;
+import com.example.l8411.wut2eat29.Fragment.BottomNavi.FriendListFragment;
 import com.example.l8411.wut2eat29.Fragment.InvitationFragment;
 
 import com.example.l8411.wut2eat29.Fragment.BottomNavi.ProfileFragment;
@@ -44,7 +46,6 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.iid.FirebaseInstanceId;
-import com.pushbots.push.Pushbots;
 
 import java.util.Calendar;
 
@@ -68,6 +69,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     private Restaurant choice = null;
     private DatabaseReference mRef;
     private FirebaseAuth mAuth;
+    private SwipeRefreshLayout swipeRefreshLayout;
 
 
     @Override
@@ -131,6 +133,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                 builder.create().show();
             }
         });
+
 
 
     }

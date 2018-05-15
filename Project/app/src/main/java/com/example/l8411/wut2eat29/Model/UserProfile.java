@@ -22,6 +22,7 @@ public class UserProfile implements Parcelable {
     private String avatarUrl;
     private History todayChoice;
     private String messageToken;
+    private long status;
 
     public UserProfile() {
 
@@ -39,6 +40,7 @@ public class UserProfile implements Parcelable {
         for (int i = 0; i < 3; i++) {
             Top3Choice.add("N/A");
         }
+        this.status = 0;
 
     }
 
@@ -127,6 +129,13 @@ public class UserProfile implements Parcelable {
         this.messageToken = messageToken;
     }
 
+    public long getStatus() {
+        return status;
+    }
+
+    public void setStatus(long status) {
+        this.status = status;
+    }
 
     @Override
     public int describeContents() {
@@ -135,10 +144,6 @@ public class UserProfile implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel parcel, int i) {
-        parcel.writeString(UserID);
-        parcel.writeString(UserNickName);
-        parcel.writeStringList(Top3Choice);
-        parcel.writeStringList(vote);
-        parcel.writeString(avatarUrl);
+
     }
 }

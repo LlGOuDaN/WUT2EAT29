@@ -13,6 +13,9 @@ import android.widget.TextView;
 
 import com.example.l8411.wut2eat29.Activity.SettingsActivity;
 import com.example.l8411.wut2eat29.R;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -20,7 +23,7 @@ import com.example.l8411.wut2eat29.R;
  * {@link Callback} interface
  * to handle interaction events.
  */
-public class SetStatusFragment extends android.support.v4.app.Fragment implements View.OnKeyListener{
+public class SetStatusFragment extends android.support.v4.app.Fragment implements View.OnKeyListener, View.OnClickListener {
 
     private Callback mCallback;
 
@@ -36,7 +39,8 @@ public class SetStatusFragment extends android.support.v4.app.Fragment implement
         View view = inflater.inflate(R.layout.fragment_set_status, container, false);
         TextView mtvFree = (TextView) view.findViewById(R.id.textViewFree);
         TextView mtvBusy = (TextView) view.findViewById(R.id.textViewBusy);
-        TextView mtvNotDisturb = (TextView) view.findViewById(R.id.textViewNotDisturb);
+        mtvBusy.setOnClickListener(this);
+        mtvFree.setOnClickListener(this);
         return view;
     }
 
@@ -62,23 +66,22 @@ public class SetStatusFragment extends android.support.v4.app.Fragment implement
         return false;
     }
 
+    @Override
+    public void onClick(View view) {
+        FirebaseAuth mAuth = FirebaseAuth.getInstance();
+        DatabaseReference mRef = FirebaseDatabase.getInstance().getReference();
 
-//    @Override
-//    public void onAttach(Context context) {
-//        super.onAttach(context);
-//        if (context instanceof Callback) {
-//            mCallback = (Callback) context;
-//        } else {
-//            throw new RuntimeException(context.toString()
-//                    + " must implement Callback");
-//        }
-//    }
-//
-//    @Override
-//    public void onDetach() {
-//        super.onDetach();
-//        mCallback = null;
-//    }
+        if(view.getId() == R.id.textViewFree){
+            mRef.child("user").child(mAuth.getCurrentUser().getUid()).child("status").setValue(0);
+            return;
+        }
+
+        if(view.getId() == R.id.textViewBusy){
+            mRef.child("user").child(mAuth.getCurrentUser().getUid()).child("status").setValue(1);
+            return;
+        }
+
+    }
 
     /**
      * This interface must be implemented by activities that contain this

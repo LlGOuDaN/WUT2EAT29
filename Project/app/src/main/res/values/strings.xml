@@ -26,7 +26,7 @@
     <string name="search">Search</string>
     <string name="user_id">User ID</string>
     <string name="send_invitation">Send Invitation</string>
-    <string name="title_activity_login">Sign in</string>
+    <string name="title_activity_login">WUT 2 EAT 2 9</string>
     <string name="logout">Logout</string>
     <string name="language">Language</string>
     <string name="status">Status</string>
@@ -73,6 +73,7 @@
     <string name="choice_of_day">You Choice of Day</string>
     <string name="are_you_sure">Are you sure?</string>
     <string name="make_choice_first">Please make a choice first.</string>
+    <string name="notification_sent">Notification sent out!</string>
 
 
 </resources>

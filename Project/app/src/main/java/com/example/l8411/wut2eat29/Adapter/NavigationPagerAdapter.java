@@ -37,28 +37,6 @@ public class NavigationPagerAdapter extends FragmentPagerAdapter {
         mList.add(SupportMapFragment.newInstance());
         mList.add(FriendListFragment.newInstance());
         mList.add(ProfileFragment.newInstance(new UserProfile("1")));
-
-//        DatabaseReference mRef = FirebaseDatabase.getInstance().getReference();
-//        FirebaseAuth mAuth = FirebaseAuth.getInstance();
-//        Query userRef = mRef.child("user").child(mAuth.getCurrentUser().getUid());
-//        Log.d("currentUser", mAuth.getCurrentUser().getUid());
-//        userRef.addListenerForSingleValueEvent(new ValueEventListener() {
-//            @Override
-//            public void onDataChange(DataSnapshot dataSnapshot) {
-//                CURRENT_USER = dataSnapshot.getValue(UserProfile.class);
-////                Log.d("cao", CURRENT_USER.getUserNickName());
-//
-//                notifyDataSetChanged();
-//            }
-//
-//            @Override
-//            public void onCancelled(DatabaseError databaseError) {
-//
-//            }
-//        });
-//        mRef.keepSynced(true);
-
-
     }
 
 

@@ -1,9 +1,12 @@
 package com.example.l8411.wut2eat29.Adapter;
 
+import android.app.AlertDialog;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
+import android.os.Handler;
+import android.support.design.widget.Snackbar;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -43,10 +46,12 @@ public class FriendsAdapter extends RecyclerView.Adapter<FriendsAdapter.ViewHold
     private DatabaseReference mRef;
     private Bitmap bitmap;
     private FriendsAdapter.ViewHolder holder;
+    private onImageViewClickListener listener;
 
-    public FriendsAdapter(List<DataSnapshot> mFriends) {
+    public FriendsAdapter(List<DataSnapshot> mFriends, onImageViewClickListener listener) {
         this.mFriends = mFriends;
         mRef = FirebaseDatabase.getInstance().getReference();
+        this.listener = listener;
     }
 
 
@@ -69,34 +74,23 @@ public class FriendsAdapter extends RecyclerView.Adapter<FriendsAdapter.ViewHold
                 if (dataSnapshot.child("todayChoice").getValue() == null) {
                     mRef.child("user").child(uid).child("todayChoice").setValue(utils.getEmptyHistory());
                     holder.placeTextView.setText(R.string.not_decided_yet);
-                }else{
-                    HashMap<String, Object> dayOfChoice = (HashMap<String, Object>) dataSnapshot.child("todayChoice").getValue();
-                    resturantName = (String) ((HashMap<String, Object>) dayOfChoice.get("resturant")).get("name");
-                    dateFormated = (String) dayOfChoice.get("dateFormated");
-                    if(resturantName.equals("NULL") ||  !dateFormated.equals(utils.parseDate( Calendar.getInstance().getTime()))){
+                } else {
+                    History dayOfChoice = dataSnapshot.child("todayChoice").getValue(History.class);
+                    resturantName = dayOfChoice.getResturant().getName();
+                    dateFormated = dayOfChoice.getDateFormated();
+                    if (resturantName.equals("NULL") || !dateFormated.equals(utils.parseDate(Calendar.getInstance().getTime()))) {
                         holder.placeTextView.setText(R.string.not_decided_yet);
-                        if(!resturantName.equals("NULL")){
-                            mRef.child("user").child(uid).addListenerForSingleValueEvent(new ValueEventListener() {
-                                @Override
-                                public void onDataChange(DataSnapshot dataSnapshot) {
-                                    UserProfile mProfile =  dataSnapshot.getValue(UserProfile.class);
-                                    if(mProfile.getHistory() == null){
-                                        mProfile.setHistory(new ArrayList<History>());
-                                    }
-                                    mProfile.getHistory().add(0, dataSnapshot.child("todayChoice").getValue(History.class));
-                                    mRef.child("user").child(uid).child("history").setValue(mProfile.getHistory());
-                                    mRef.child("user").child(uid).child("todayChoice").setValue(utils.getEmptyHistory());
+                        if (!resturantName.equals("NULL")) {
 
-                                }
-
-                                @Override
-                                public void onCancelled(DatabaseError databaseError) {
-
-                                }
-                            });
-
+                            UserProfile mProfile = dataSnapshot.getValue(UserProfile.class);
+                            if (mProfile.getHistory() == null) {
+                                mProfile.setHistory(new ArrayList<History>());
+                            }
+                            mProfile.getHistory().add(0, dayOfChoice);
+                            mRef.child("user").child(uid).child("history").setValue(mProfile.getHistory());
+                            mRef.child("user").child(uid).child("todayChoice").setValue(utils.getEmptyHistory());
                         }
-                    }else{
+                    } else {
                         holder.placeTextView.setText(resturantName);
                     }
                 }
@@ -106,9 +100,10 @@ public class FriendsAdapter extends RecyclerView.Adapter<FriendsAdapter.ViewHold
                         HashMap<String, String> notificationData = new HashMap<>();
                         notificationData.put("sent_authId", FirebaseAuth.getInstance().getCurrentUser().getUid());
                         mRef.child("notification").child(uid).push().setValue(notificationData);
+                        listener.onImageViewClick();
                     }
                 });
-                new GetImageTask().execute(dataSnapshot.child("avatarUrl").getValue(String.class));
+                new GetImageTask().execute(dataSnapshot.child("avatarUrl").getValue(String.class), holder.head);
             }
 
             @Override
@@ -129,7 +124,6 @@ public class FriendsAdapter extends RecyclerView.Adapter<FriendsAdapter.ViewHold
 
     public void deleteFriend(int position) {
 
-        notifyItemRemoved(position);
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {
@@ -154,24 +148,29 @@ public class FriendsAdapter extends RecyclerView.Adapter<FriendsAdapter.ViewHold
         }
     }
 
-    public class GetImageTask extends AsyncTask<String,Void,Void> {
+    public class GetImageTask extends AsyncTask<Object,Object,Object> {
 
         @Override
-        protected Void doInBackground(String... strings) {
-            String urlString = strings[0];
+        protected Object doInBackground(Object... objects) {
+            String urlString = (String) objects[0];
             try {
                 InputStream in = new URL(urlString).openStream();
                 bitmap = BitmapFactory.decodeStream(in);
             } catch (IOException e) {
                 e.printStackTrace();
             }
-            return null;
+            return objects[1];
         }
 
         @Override
-        protected void onPostExecute(Void aVoid) {
-            super.onPostExecute(aVoid);
-            holder.head.setImageBitmap(bitmap);
+        protected void onPostExecute(Object object) {
+            super.onPostExecute(object);
+            ImageView head = (ImageView) object;
+            head.setImageBitmap(bitmap);
         }
+    }
+
+    public interface onImageViewClickListener{
+        void onImageViewClick();
     }
 }
