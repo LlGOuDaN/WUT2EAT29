@@ -34,7 +34,7 @@
             android:layout_alignParentEnd="true"
             android:layout_alignParentTop="true"
             android:layout_marginEnd="30dp"
-            app:srcCompat="@drawable/icons8_thumbs_up_24"
+            app:srcCompat="@drawable/icons8_question_mark_24"
             />
 
 
