@@ -118,7 +118,7 @@ public class ProfileFragment extends android.support.v4.app.Fragment implements 
         mSetting = rootView.findViewById(R.id.setting);
 
         final DatabaseReference mUserRef = mRef.child("user");
-        mUserRef.child(mAuth.getCurrentUser().getUid()).addListenerForSingleValueEvent(new ValueEventListener() {
+        mUserRef.child(mAuth.getCurrentUser().getUid()).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 mProfile = dataSnapshot.getValue(UserProfile.class);
@@ -142,7 +142,7 @@ public class ProfileFragment extends android.support.v4.app.Fragment implements 
                     if(!choice.getDateFormated().equals("NULL")){
                         mProfile.getHistory().add(0,choice);
                         mUserRef.child(mAuth.getCurrentUser().getUid()).child("history").setValue(mProfile.getHistory());
-                        mUserRef.child(mAuth.getCurrentUser().getUid()).child("todayChoice").setValue( choice = utils.getEmptyHistory());
+                        mUserRef.child(mAuth.getCurrentUser().getUid()).child("todayChoice").setValue(utils.getEmptyHistory());
                     }
                 }else{
                     mTodayChoice.setText(String.format("Choice: %s", mProfile.getTodayChoice().getResturant().getName()));
@@ -254,7 +254,7 @@ public class ProfileFragment extends android.support.v4.app.Fragment implements 
         return false;
     }
 
-    class GetImageTask extends AsyncTask<String,Void,Void> {
+    public class GetImageTask extends AsyncTask<String,Void,Void> {
 
         @Override
         protected Void doInBackground(String... strings) {

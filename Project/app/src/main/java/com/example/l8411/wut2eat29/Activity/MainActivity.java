@@ -83,6 +83,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         viewPager = this.findViewById(R.id.container);
         viewPager.setAdapter(navigationPagerAdapter);
         viewPager.addOnPageChangeListener(this);
+        viewPager.setOffscreenPageLimit(2);
         mRef = FirebaseDatabase.getInstance().getReference();
         mAuth = FirebaseAuth.getInstance();
         mRef.child("user").child(mAuth.getCurrentUser().getUid()).child("messageToken").setValue(FirebaseInstanceId.getInstance().getToken());
@@ -110,7 +111,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
             @Override
             public void onClick(View view) {
                 AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
-                builder.setTitle("You Choice of Day");
+                builder.setTitle(R.string.choice_of_day);
                 if (choice != null) {
                     builder.setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
                         @Override
@@ -122,9 +123,9 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                         }
                     });
                     builder.setNegativeButton(android.R.string.cancel, null);
-                    builder.setMessage(choice.getName() + "\n" + choice.getVicinity() + "\nAre you sure?");
+                    builder.setMessage(choice.getName() + "\n" + choice.getVicinity() + getString(R.string.are_you_sure));
                 } else {
-                    builder.setMessage("Please make a choice first.");
+                    builder.setMessage(R.string.make_choice_first);
                 }
 
                 builder.create().show();
@@ -144,7 +145,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
             switch (item.getItemId()) {
                 case R.id.navigation_map:
                     mMapFragment = (SupportMapFragment) navigationPagerAdapter.getItem(0);
-                    mMapFragment.getMapAsync(MainActivity.this);
+//                    mMapFragment.getMapAsync(MainActivity.this);
                     MainActivity.this.findViewById(R.id.search_view).setVisibility(View.VISIBLE);
                     MainActivity.this.findViewById(R.id.fab_here).setVisibility(View.VISIBLE);
                     viewPager.setCurrentItem(0);

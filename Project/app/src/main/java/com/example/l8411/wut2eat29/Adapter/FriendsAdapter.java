@@ -1,12 +1,16 @@
 package com.example.l8411.wut2eat29.Adapter;
 
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.os.AsyncTask;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.l8411.wut2eat29.Model.History;
@@ -21,6 +25,9 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
@@ -34,6 +41,8 @@ import java.util.Random;
 public class FriendsAdapter extends RecyclerView.Adapter<FriendsAdapter.ViewHolder> {
     private List<DataSnapshot> mFriends;
     private DatabaseReference mRef;
+    private Bitmap bitmap;
+    private FriendsAdapter.ViewHolder holder;
 
     public FriendsAdapter(List<DataSnapshot> mFriends) {
         this.mFriends = mFriends;
@@ -49,6 +58,7 @@ public class FriendsAdapter extends RecyclerView.Adapter<FriendsAdapter.ViewHold
 
     @Override
     public void onBindViewHolder(final FriendsAdapter.ViewHolder holder, final int position) {
+        this.holder = holder;
         mRef.child("user").child(mFriends.get(position).getKey()).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(final DataSnapshot dataSnapshot) {
@@ -98,6 +108,7 @@ public class FriendsAdapter extends RecyclerView.Adapter<FriendsAdapter.ViewHold
                         mRef.child("notification").child(uid).push().setValue(notificationData);
                     }
                 });
+                new GetImageTask().execute(dataSnapshot.child("avatarUrl").getValue(String.class));
             }
 
             @Override
@@ -125,6 +136,7 @@ public class FriendsAdapter extends RecyclerView.Adapter<FriendsAdapter.ViewHold
         TextView nameTextView;
         TextView placeTextView;
         ImageButton imageButton;
+        ImageView head;
 
         public ViewHolder(View view) {
             super(view);
@@ -138,6 +150,28 @@ public class FriendsAdapter extends RecyclerView.Adapter<FriendsAdapter.ViewHold
             nameTextView = view.findViewById(R.id.name_view);
             placeTextView = view.findViewById(R.id.place_view);
             imageButton = view.findViewById(R.id.imageButton);
+            head = view.findViewById(R.id.avatar_image);
+        }
+    }
+
+    public class GetImageTask extends AsyncTask<String,Void,Void> {
+
+        @Override
+        protected Void doInBackground(String... strings) {
+            String urlString = strings[0];
+            try {
+                InputStream in = new URL(urlString).openStream();
+                bitmap = BitmapFactory.decodeStream(in);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            super.onPostExecute(aVoid);
+            holder.head.setImageBitmap(bitmap);
         }
     }
 }

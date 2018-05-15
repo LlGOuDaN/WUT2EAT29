@@ -70,6 +70,9 @@
     <string name="invitation_sent">The invitation has been sent</string>
     <string name="your_today_s_vote_s">Your Today\'s Vote: %s</string>
     <string name="invite">Invite</string>
+    <string name="choice_of_day">You Choice of Day</string>
+    <string name="are_you_sure">Are you sure?</string>
+    <string name="make_choice_first">Please make a choice first.</string>
 
 
 </resources>
