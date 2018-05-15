@@ -122,6 +122,7 @@ public class StartAVoteFragment extends android.support.v4.app.Fragment  {
                         public void onClick(DialogInterface dialogInterface, int i) {
                             String mResturant = editText.getText().toString();
                             Vote mVote = new Vote(mResturant);
+                            mVote.setVoteOwnerID(mAuth.getCurrentUser().getUid());
                             List<String> nameList = mStartAVoteAdapter.getmVoteList();
                             HashMap<String,Integer> mvoteDetails = new HashMap<>();
                             for( String name : nameList){

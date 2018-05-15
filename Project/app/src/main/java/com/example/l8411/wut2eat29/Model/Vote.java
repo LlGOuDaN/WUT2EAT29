@@ -12,6 +12,16 @@ public class Vote {
     private String voteID;
     private String dateFormated;
 
+    public String getVoteOwnerID() {
+        return voteOwnerID;
+    }
+
+    public void setVoteOwnerID(String voteOwner) {
+        this.voteOwnerID = voteOwner;
+    }
+
+    private String voteOwnerID;
+
     public  Vote(){
 
     }

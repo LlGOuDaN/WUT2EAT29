@@ -16,8 +16,14 @@ import com.example.l8411.wut2eat29.Adapter.HistoryAdapter;
 import com.example.l8411.wut2eat29.Adapter.ViewVoteAdapter;
 import com.example.l8411.wut2eat29.R;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -47,8 +53,35 @@ public class ViewVoteFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_view_vote, container, false);
-        TextView mTextView = view.findViewById(R.id.view_vote_top_text);
-        mTextView.setText(String.format(getString(R.string.your_today_s_vote_s),"Chauncey"));
+        final TextView mTextView = view.findViewById(R.id.view_vote_top_text);
+        mRef.child("user").child(mAuth.getCurrentUser().getUid()).child("voteList").addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                HashMap<String,Boolean> voteMap =(HashMap<String,Boolean>) dataSnapshot.getValue();
+                for ( Map.Entry<String,Boolean> entry : voteMap.entrySet() ) {
+                    if(entry.getValue()){
+                        mRef.child("votes").child(entry.getKey()).child("resturant").addListenerForSingleValueEvent(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(DataSnapshot dataSnapshot) {
+                                mTextView.setText(String.format(getString(R.string.your_today_s_vote_s),dataSnapshot.getValue().toString()));
+                            }
+
+                            @Override
+                            public void onCancelled(DatabaseError databaseError) {
+
+                            }
+                        });
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+
+
         RecyclerView recyclerView = view.findViewById(R.id.view_vote_recycler_view);
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         recyclerView.setHasFixedSize(true);
