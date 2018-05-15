@@ -2,6 +2,7 @@ package com.example.l8411.wut2eat29.Adapter;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -58,38 +59,43 @@ public class FriendsAdapter extends RecyclerView.Adapter<FriendsAdapter.ViewHold
                 if (dataSnapshot.child("todayChoice").getValue() == null) {
                     mRef.child("user").child(uid).child("todayChoice").setValue(utils.getEmptyHistory());
                     holder.placeTextView.setText(R.string.not_decided_yet);
-                    notifyDataSetChanged();
-                }else{
-                    HashMap<String, Object> dayOfChoice = (HashMap<String, Object>) dataSnapshot.child("todayChoice").getValue();
-                    resturantName = (String) ((HashMap<String, Object>) dayOfChoice.get("resturant")).get("name");
-                    dateFormated = (String) dayOfChoice.get("dateFormated");
-                    if(resturantName.equals("NULL") ||  !dateFormated.equals(utils.parseDate( Calendar.getInstance().getTime()))){
+                } else {
+                    History dayOfChoice = dataSnapshot.child("todayChoice").getValue(History.class);
+                    resturantName = dayOfChoice.getResturant().getName();
+                    dateFormated = dayOfChoice.getDateFormated();
+                    if (resturantName.equals("NULL") || !dateFormated.equals(utils.parseDate(Calendar.getInstance().getTime()))) {
                         holder.placeTextView.setText(R.string.not_decided_yet);
-                        if(!resturantName.equals("NULL")){
-                            mRef.child("user").child(uid).addListenerForSingleValueEvent(new ValueEventListener() {
-                                @Override
-                                public void onDataChange(DataSnapshot dataSnapshot) {
-                                    UserProfile mProfile =  dataSnapshot.getValue(UserProfile.class);
-                                    if(mProfile.getHistory() == null){
-                                        mProfile.setHistory(new ArrayList<History>());
-                                    }
-                                    mProfile.getHistory().add(0, dataSnapshot.child("todayChoice").getValue(History.class));
-                                    mRef.child("user").child(uid).child("history").setValue(mProfile.getHistory());
-                                    mRef.child("user").child(uid).child("todayChoice").setValue(utils.getEmptyHistory());
+                        if (!resturantName.equals("NULL")) {
 
-                                }
-
-                                @Override
-                                public void onCancelled(DatabaseError databaseError) {
-
-                                }
-                            });
-
+                            UserProfile mProfile = dataSnapshot.getValue(UserProfile.class);
+                            if (mProfile.getHistory() == null) {
+                                mProfile.setHistory(new ArrayList<History>());
+                            }
+                            mProfile.getHistory().add(0, dayOfChoice);
+                            mRef.child("user").child(uid).child("history").setValue(mProfile.getHistory());
+                            mRef.child("user").child(uid).child("todayChoice").setValue(utils.getEmptyHistory());
+//                            mRef.child("user").child(uid).addListenerForSingleValueEvent(new ValueEventListener() {
+//                                @Override
+//                                public void onDataChange(DataSnapshot dataSnapshot) {
+//                                    UserProfile mProfile =  dataSnapshot.getValue(UserProfile.class);
+//                                    if(mProfile.getHistory() == null){
+//                                        mProfile.setHistory(new ArrayList<History>());
+//                                    }
+//                                    mProfile.getHistory().add(0, dataSnapshot.child("todayChoice").getValue(History.class));
+//                                    mRef.child("user").child(uid).child("history").setValue(mProfile.getHistory());
+//                                    mRef.child("user").child(uid).child("todayChoice").setValue(utils.getEmptyHistory());
+//
+//                                }
+//
+//                                @Override
+//                                public void onCancelled(DatabaseError databaseError) {
+//
+//                                }
+//                            });
                         }
-                    }else{
+                    } else {
                         holder.placeTextView.setText(resturantName);
                     }
-                    notifyDataSetChanged();
                 }
                 holder.imageButton.setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -99,8 +105,6 @@ public class FriendsAdapter extends RecyclerView.Adapter<FriendsAdapter.ViewHold
                         mRef.child("notification").child(uid).push().setValue(notificationData);
                     }
                 });
-
-
             }
 
             @Override
@@ -108,9 +112,6 @@ public class FriendsAdapter extends RecyclerView.Adapter<FriendsAdapter.ViewHold
 
             }
         });
-
-
-
 
 
     }

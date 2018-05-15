@@ -3,6 +3,7 @@ package com.example.l8411.wut2eat29.Fragment.BottomNavi;
 import android.net.Uri;
 import android.os.Bundle;
 import android.app.Fragment;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -89,6 +90,13 @@ public class FriendListFragment extends android.support.v4.app.Fragment {
             @Override
             public void onCancelled(DatabaseError databaseError) {
 
+            }
+        });
+        FloatingActionButton fab = friendNameView.findViewById(R.id.refresh_fab);
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                mFriendsAdapter.notifyDataSetChanged();
             }
         });
 
