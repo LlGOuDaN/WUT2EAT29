@@ -3,7 +3,7 @@
     <string name="title_home">Home</string>
     <string name="title_dashboard">Dashboard</string>
     <string name="title_notifications">Notifications</string>
-
+    <string name="which_resturant">Which Resturant to go?</string>>
     <string name="invitationcard">%s send you an invitation</string>
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="title_activity_maps">Map</string>
@@ -20,13 +20,13 @@
     <string name="b">B</string>
     <string name="c">C</string>
     <string name="view_history">View History</string>
-    <string name="view_votes">View Votes</string>
+    <string name="view_votes">View My Votes</string>
     <string name="title">WUT2EAT29</string>
     <string name="search_place_hint">Search Place</string>
     <string name="search">Search</string>
     <string name="user_id">User ID</string>
     <string name="send_invitation">Send Invitation</string>
-    <string name="title_activity_login">Sign in</string>
+    <string name="title_activity_login">WUT 2 EAT 2 9</string>
     <string name="logout">Logout</string>
     <string name="language">Language</string>
     <string name="status">Status</string>
@@ -68,7 +68,18 @@
     <string name="user_does_not_exist">User does not exist!</string>
     <string name="success">Success!</string>
     <string name="invitation_sent">The invitation has been sent</string>
-    <string name="your_today_s_vote_s">Your Today\'s Vote: %s</string>
+    <string name="your_today_s_vote_s">Restaurant: %s</string>
+    <string name="invite">Invite</string>
+    <string name="choice_of_day">You Choice of Day</string>
+    <string name="are_you_sure">Are you sure?</string>
+    <string name="make_choice_first">Please make a choice first.</string>
+    <string name="notification_sent">Notification sent out!</string>
+    <string name="message">Message</string>
+    <string name="status_free">Status Set to Free</string>
+    <string name="status_busy">Status Set to Busy</string>
+    <string name="upload_avatar">Upload a Avatar</string>
+    <string name="s_ask_you_eat_together">%s ask you to eat together</string>
+    <string name="do_vote">Do Vote</string>
 
 
 </resources>

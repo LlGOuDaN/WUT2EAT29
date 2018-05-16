@@ -15,35 +15,44 @@ import android.widget.TextView;
 import com.example.l8411.wut2eat29.Adapter.HistoryAdapter;
 import com.example.l8411.wut2eat29.Adapter.ViewVoteAdapter;
 import com.example.l8411.wut2eat29.R;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * A simple {@link Fragment} subclass.
  */
 public class ViewVoteFragment extends Fragment {
-
-    private static final String ARG_UID = "UID";
-
-    // TODO: Rename and change types of parameters
-    private String UID;
+    private FirebaseAuth mAuth;
+    private DatabaseReference mRef;
+    private String mOwner;
 
     public ViewVoteFragment() {
         // Required empty public constructor
     }
 
-    public static ViewVoteFragment newInstance(String UID){
+    public static ViewVoteFragment newInstance(String Owner){
         ViewVoteFragment fragment = new ViewVoteFragment();
-        Bundle args = new Bundle();
-        args.putString(ARG_UID,UID);
-        fragment.setArguments(args);
+        Bundle bundle = new Bundle();
+        bundle.putString("OwnerID", Owner);
+        fragment.setArguments(bundle);
         return fragment;
     }
 
     @Override
     public void onCreate( Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            UID = getArguments().getString(ARG_UID);
-        }
+        mAuth = FirebaseAuth.getInstance();
+        mRef = FirebaseDatabase.getInstance().getReference();
+        Bundle bundle = this.getArguments();
+        if(bundle != null){
+        mOwner = bundle.getString("OwnerID");}
     }
 
     @Override
@@ -51,12 +60,39 @@ public class ViewVoteFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_view_vote, container, false);
-        TextView mTextView = view.findViewById(R.id.view_vote_top_text);
-        mTextView.setText(String.format(getString(R.string.your_today_s_vote_s),"Chauncey"));
+        final TextView mTextView = view.findViewById(R.id.view_vote_top_text);
+        mRef.child("user").child(mOwner).child("voteList").addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                HashMap<String,Boolean> voteMap =(HashMap<String,Boolean>) dataSnapshot.getValue();
+                for ( Map.Entry<String,Boolean> entry : voteMap.entrySet() ) {
+                    if(entry.getValue()){
+                        mRef.child("votes").child(entry.getKey()).child("resturant").addListenerForSingleValueEvent(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(DataSnapshot dataSnapshot) {
+                                mTextView.setText(String.format(getString(R.string.your_today_s_vote_s),dataSnapshot.getValue().toString()));
+                            }
+
+                            @Override
+                            public void onCancelled(DatabaseError databaseError) {
+
+                            }
+                        });
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+
+
         RecyclerView recyclerView = view.findViewById(R.id.view_vote_recycler_view);
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         recyclerView.setHasFixedSize(true);
-        ViewVoteAdapter adapter = new ViewVoteAdapter();
+        ViewVoteAdapter adapter = new ViewVoteAdapter(mRef,mAuth,mOwner);
         recyclerView.setAdapter(adapter);
         return view;
     }

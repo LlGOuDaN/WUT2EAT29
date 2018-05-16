@@ -24,21 +24,32 @@ exports.sendNotification = functions.database.ref('/notification/{user_id}/{noti
     
                 const token = snapshot.val();
                 console.log(token);
-                const payload = {
-                    notification: {
-                        title: "Want You!",
-                        body: "wants to join you tonight!",
-                        icon:"default"
-                    },
-                    data: {
-                        "message_id": String(notification_id),
-                        "sent_nickname": String(userFromNickName)
+                
+                const status = admin.database().ref('/user/' + user_id + '/status').once('value');
+                return status.then(function(snapshot3){
+                    const statusNumber = snapshot3.val();
+
+                    if(statusNumber < 1){
+                        const payload = {
+                            notification: {
+                                title: "Want You!",
+                                body: "wants to join you tonight!",
+                                icon:"default"
+                            },
+                            data: {
+                                "message_id": String(notification_id),
+                                "sent_nickname": String(userFromNickName)
+                            }
+                        };
+                
+                        return admin.messaging().sendToDevice(token ,  payload).then(response => {
+                            return console.log('this is the notification');
+                        }); 
+                    }else{
+                        return console.log('no disturb');
                     }
-                };
-        
-                return admin.messaging().sendToDevice(token ,  payload).then(response => {
-                    return console.log('this is the notification');
-                }); 
+                    
+                });
     
             });
     

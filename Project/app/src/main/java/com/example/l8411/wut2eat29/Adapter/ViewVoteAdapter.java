@@ -9,6 +9,11 @@ import android.widget.TextView;
 
 import com.example.l8411.wut2eat29.Model.Vote;
 import com.example.l8411.wut2eat29.R;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -21,20 +26,75 @@ import java.util.TreeMap;
  */
 
 public class ViewVoteAdapter extends RecyclerView.Adapter<ViewVoteAdapter.ViewHolder>{
-    Vote mVote;
-    HashMap<String,Integer> mVoteDetails;
-    Object[] mVoteDetailsList;
-    String[] mVoterNameList;
-    Integer[] mVoterStatus;
+    private Vote mVote;
+    private String mVoteOwner;
+    private DatabaseReference mRef;
+    private FirebaseAuth mAuth;
+    private HashMap<String,Integer> mVoteDetails;
+    private Object[] mVoteDetailsList;
+    private ArrayList<String> mVoteUIDList;
+    private ArrayList<String> mVoterNameList;
+    private ArrayList<Integer> mVoterStatus;
 
-    public ViewVoteAdapter() {
-        this.mVote = new Vote("TestVote",null,new HashMap<String, Integer>());
-        this.mVoteDetails = mVote.getVoteDetails();
-        mVoteDetails.put("Arthur",1);
-        mVoteDetails.put("Goudan Li",2);
-        mVoteDetails.put("Someone",0);
-        mVoteDetailsList = mVoteDetails.entrySet().toArray();
-        mVoterNameList = mVoteDetails.keySet().toArray(new String[0]);
+    public ViewVoteAdapter(DatabaseReference Ref, FirebaseAuth mAuth, String Owner) {
+        this.mVoteOwner = Owner;
+        this.mRef = Ref;
+        this.mAuth = mAuth;
+        this.mVoterNameList = new ArrayList<>();
+        this.mVoterStatus = new ArrayList<>();
+        this.mVoteUIDList = new ArrayList<>();
+        final DatabaseReference mVoteRef = mRef.child("user").child(mVoteOwner).child("voteList");
+        mVoteRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                Map<String,Boolean> votelist = (Map<String, Boolean>) dataSnapshot.getValue();
+                for(String voteid : votelist.keySet()){
+                    if(votelist.get(voteid)){
+                        mRef.child("votes").child(voteid).addListenerForSingleValueEvent(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(DataSnapshot dataSnapshot) {
+                                mVote = dataSnapshot.getValue(Vote.class);
+                                mVoteDetails = mVote.getVoteDetails();
+                                mVoteDetailsList = mVoteDetails.entrySet().toArray();
+                                for ( Map.Entry<String,Integer> entry : mVoteDetails.entrySet() ) {
+                                    mVoteUIDList.add(entry.getKey());
+                                    mVoterStatus.add(entry.getValue());
+                                }
+                                for (String uid: mVoteUIDList
+                                     ) {
+                                    mRef.child("user").child(uid).child("userNickName").addListenerForSingleValueEvent(new ValueEventListener() {
+                                        @Override
+                                        public void onDataChange(DataSnapshot dataSnapshot) {
+                                            mVoterNameList.add(dataSnapshot.getValue().toString());
+                                            notifyDataSetChanged();
+                                        }
+
+                                        @Override
+                                        public void onCancelled(DatabaseError databaseError) {
+
+                                        }
+                                    });
+                                }
+                                notifyDataSetChanged();
+                            }
+
+                            @Override
+                            public void onCancelled(DatabaseError databaseError) {
+
+                            }
+                        });
+
+                    }
+                }
+
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+
 
     }
 
@@ -46,13 +106,19 @@ public class ViewVoteAdapter extends RecyclerView.Adapter<ViewVoteAdapter.ViewHo
 
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
-        String name = mVoterNameList[position];
+        String name = mVoterNameList.get(position);
+        Integer status = mVoterStatus.get(position);
         holder.VoterName.setText(name);
+        if(status == 1){
+            holder.VoteStatus.setImageResource(R.drawable.icons8_thumbs_up_24);
+        }else if(status ==2){
+            holder.VoteStatus.setImageResource(R.drawable.icons8_thumbs_down_24);
+        }
     }
 
     @Override
     public int getItemCount() {
-        return mVoterNameList.length;
+        return mVoterNameList.size();
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder{

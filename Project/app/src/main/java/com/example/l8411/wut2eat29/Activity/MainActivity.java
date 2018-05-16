@@ -18,6 +18,7 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 
 import android.support.v4.view.ViewPager;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.SearchView;
 import android.util.Log;
@@ -28,6 +29,7 @@ import android.view.View;
 import com.example.l8411.wut2eat29.Adapter.NavigationPagerAdapter;
 
 import com.example.l8411.wut2eat29.Fragment.AddContactFragment;
+import com.example.l8411.wut2eat29.Fragment.BottomNavi.FriendListFragment;
 import com.example.l8411.wut2eat29.Fragment.InvitationFragment;
 
 import com.example.l8411.wut2eat29.Fragment.BottomNavi.ProfileFragment;
@@ -44,7 +46,6 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.iid.FirebaseInstanceId;
-import com.pushbots.push.Pushbots;
 
 import java.util.Calendar;
 
@@ -68,6 +69,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     private Restaurant choice = null;
     private DatabaseReference mRef;
     private FirebaseAuth mAuth;
+    private SwipeRefreshLayout swipeRefreshLayout;
 
 
     @Override
@@ -83,6 +85,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         viewPager = this.findViewById(R.id.container);
         viewPager.setAdapter(navigationPagerAdapter);
         viewPager.addOnPageChangeListener(this);
+        viewPager.setOffscreenPageLimit(2);
         mRef = FirebaseDatabase.getInstance().getReference();
         mAuth = FirebaseAuth.getInstance();
         mRef.child("user").child(mAuth.getCurrentUser().getUid()).child("messageToken").setValue(FirebaseInstanceId.getInstance().getToken());
@@ -110,7 +113,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
             @Override
             public void onClick(View view) {
                 AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
-                builder.setTitle("You Choice of Day");
+                builder.setTitle(R.string.choice_of_day);
                 if (choice != null) {
                     builder.setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
                         @Override
@@ -122,9 +125,9 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                         }
                     });
                     builder.setNegativeButton(android.R.string.cancel, null);
-                    builder.setMessage(choice.getName() + "\n" + choice.getVicinity() + "\nAre you sure?");
+                    builder.setMessage(choice.getName() + "\n" + choice.getVicinity() + getString(R.string.are_you_sure));
                 } else {
-                    builder.setMessage("Please make a choice first.");
+                    builder.setMessage(R.string.make_choice_first);
                 }
 
                 builder.create().show();
@@ -144,7 +147,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
             switch (item.getItemId()) {
                 case R.id.navigation_map:
                     mMapFragment = (SupportMapFragment) navigationPagerAdapter.getItem(0);
-                    mMapFragment.getMapAsync(MainActivity.this);
+//                    mMapFragment.getMapAsync(MainActivity.this);
                     MainActivity.this.findViewById(R.id.search_view).setVisibility(View.VISIBLE);
                     MainActivity.this.findViewById(R.id.fab_here).setVisibility(View.VISIBLE);
                     viewPager.setCurrentItem(0);
@@ -240,7 +243,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         if (id == R.id.action_addContact) {
             mAddContactFragment = new AddContactFragment();
             FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-            fm.popBackStack(previousFrag, FragmentManager.POP_BACK_STACK_INCLUSIVE);
+            fm.popBackStackImmediate(previousFrag, FragmentManager.POP_BACK_STACK_INCLUSIVE);
             ft.add(R.id.fragment_container, mAddContactFragment).commit();
             ft.addToBackStack("AddContact");
             previousFrag = "AddContact";
@@ -254,7 +257,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         if (id == R.id.action_startVote) {
             mStartAVoteFragment = new StartAVoteFragment();
             FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-            fm.popBackStack(previousFrag, FragmentManager.POP_BACK_STACK_INCLUSIVE);
+            fm.popBackStackImmediate(previousFrag, FragmentManager.POP_BACK_STACK_INCLUSIVE);
             ft.add(R.id.fragment_container, mStartAVoteFragment).commit();
             ft.addToBackStack("StartAVote");
             previousFrag = "StartAVote";
@@ -267,7 +270,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         if (id == R.id.action_Invitation) {
             mInvitationFragment = new InvitationFragment();
             FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-            fm.popBackStack(previousFrag, FragmentManager.POP_BACK_STACK_INCLUSIVE);
+            fm.popBackStackImmediate(previousFrag, FragmentManager.POP_BACK_STACK_INCLUSIVE);
             ft.add(R.id.fragment_container, mInvitationFragment).commit();
             ft.addToBackStack("Invitation");
             previousFrag = "Invitation";
@@ -324,6 +327,11 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     @Override
     public boolean onQueryTextChange(String s) {
         return false;
+    }
+
+    @Override
+    public void onBackPressed() {
+        this.moveTaskToBack(true);
     }
 }
 

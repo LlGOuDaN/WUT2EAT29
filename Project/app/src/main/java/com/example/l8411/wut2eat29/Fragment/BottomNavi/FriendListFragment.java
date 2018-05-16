@@ -1,10 +1,15 @@
 package com.example.l8411.wut2eat29.Fragment.BottomNavi;
 
+import android.app.AlertDialog;
 import android.net.Uri;
 import android.os.Bundle;
 import android.app.Fragment;
+import android.os.Handler;
+import android.support.design.widget.FloatingActionButton;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -23,10 +28,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-public class FriendListFragment extends android.support.v4.app.Fragment {
+public class FriendListFragment extends android.support.v4.app.Fragment implements FriendsAdapter.onImageViewClickListener, SwipeRefreshLayout.OnRefreshListener, View.OnKeyListener {
     private FriendsAdapter mFriendsAdapter;
     private FirebaseAuth mAuth;
     private DatabaseReference mRef;
+    private SwipeRefreshLayout swipeRefreshLayout;
 
 
     public FriendListFragment() {
@@ -67,7 +73,7 @@ public class FriendListFragment extends android.support.v4.app.Fragment {
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
                 friends.add(dataSnapshot);
-                mFriendsAdapter = new FriendsAdapter(friends);
+                mFriendsAdapter = new FriendsAdapter(friends, FriendListFragment.this);
                 recyclerView.setAdapter(mFriendsAdapter);
             }
 
@@ -91,9 +97,37 @@ public class FriendListFragment extends android.support.v4.app.Fragment {
 
             }
         });
-
+        swipeRefreshLayout = friendNameView.findViewById(R.id.swipe_refresh);
+        swipeRefreshLayout.setOnRefreshListener(this);
 
         return friendNameView;
     }
 
+    @Override
+    public void onImageViewClick() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+        builder.setTitle(getString(R.string.success));
+        builder.setMessage(getString(R.string.notification_sent));
+        builder.create().show();
+    }
+
+    @Override
+    public void onRefresh() {
+        mFriendsAdapter.notifyDataSetChanged();
+        swipeRefreshLayout.setColorSchemeColors(0,0,0,0);
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                swipeRefreshLayout.setRefreshing(false);
+            }
+        }, 1000);
+    }
+
+    @Override
+    public boolean onKey(View view, int i, KeyEvent keyEvent) {
+        if(i == KeyEvent.KEYCODE_BACK){
+
+        }
+        return false;
+    }
 }

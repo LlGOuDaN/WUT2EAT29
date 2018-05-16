@@ -79,6 +79,7 @@ public class LoginActivity extends AppCompatActivity implements LoginFragment.On
                 FirebaseUser user = firebaseAuth.getCurrentUser();
 
                 if (user != null) {
+                    mRef.child("user").child(mAuth.getCurrentUser().getUid()).child("status").setValue(0);
                     switchToMainActivity("users/" + user.getUid());
                 }
             }
@@ -107,6 +108,8 @@ public class LoginActivity extends AppCompatActivity implements LoginFragment.On
 
                             }
                         });
+                    }else {
+
                     }
                 }
             }

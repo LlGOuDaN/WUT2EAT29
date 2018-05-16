@@ -1,11 +1,19 @@
 package com.example.l8411.wut2eat29.Adapter;
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.os.AsyncTask;
+import android.os.Handler;
+import android.support.design.widget.Snackbar;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.l8411.wut2eat29.Model.History;
@@ -20,6 +28,9 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
@@ -33,10 +44,14 @@ import java.util.Random;
 public class FriendsAdapter extends RecyclerView.Adapter<FriendsAdapter.ViewHolder> {
     private List<DataSnapshot> mFriends;
     private DatabaseReference mRef;
+    private Bitmap bitmap;
+    private FriendsAdapter.ViewHolder holder;
+    private onImageViewClickListener listener;
 
-    public FriendsAdapter(List<DataSnapshot> mFriends) {
+    public FriendsAdapter(List<DataSnapshot> mFriends, onImageViewClickListener listener) {
         this.mFriends = mFriends;
         mRef = FirebaseDatabase.getInstance().getReference();
+        this.listener = listener;
     }
 
 
@@ -48,6 +63,7 @@ public class FriendsAdapter extends RecyclerView.Adapter<FriendsAdapter.ViewHold
 
     @Override
     public void onBindViewHolder(final FriendsAdapter.ViewHolder holder, final int position) {
+        this.holder = holder;
         mRef.child("user").child(mFriends.get(position).getKey()).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(final DataSnapshot dataSnapshot) {
@@ -58,34 +74,23 @@ public class FriendsAdapter extends RecyclerView.Adapter<FriendsAdapter.ViewHold
                 if (dataSnapshot.child("todayChoice").getValue() == null) {
                     mRef.child("user").child(uid).child("todayChoice").setValue(utils.getEmptyHistory());
                     holder.placeTextView.setText(R.string.not_decided_yet);
-                }else{
-                    HashMap<String, Object> dayOfChoice = (HashMap<String, Object>) dataSnapshot.child("todayChoice").getValue();
-                    resturantName = (String) ((HashMap<String, Object>) dayOfChoice.get("resturant")).get("name");
-                    dateFormated = (String) dayOfChoice.get("dateFormated");
-                    if(resturantName.equals("NULL") ||  !dateFormated.equals(utils.parseDate( Calendar.getInstance().getTime()))){
+                } else {
+                    History dayOfChoice = dataSnapshot.child("todayChoice").getValue(History.class);
+                    resturantName = dayOfChoice.getResturant().getName();
+                    dateFormated = dayOfChoice.getDateFormated();
+                    if (resturantName.equals("NULL") || !dateFormated.equals(utils.parseDate(Calendar.getInstance().getTime()))) {
                         holder.placeTextView.setText(R.string.not_decided_yet);
-                        if(!resturantName.equals("NULL")){
-                            mRef.child("user").child(uid).addListenerForSingleValueEvent(new ValueEventListener() {
-                                @Override
-                                public void onDataChange(DataSnapshot dataSnapshot) {
-                                    UserProfile mProfile =  dataSnapshot.getValue(UserProfile.class);
-                                    if(mProfile.getHistory() == null){
-                                        mProfile.setHistory(new ArrayList<History>());
-                                    }
-                                    mProfile.getHistory().add(0, dataSnapshot.child("todayChoice").getValue(History.class));
-                                    mRef.child("user").child(uid).child("history").setValue(mProfile.getHistory());
-                                    mRef.child("user").child(uid).child("todayChoice").setValue(utils.getEmptyHistory());
+                        if (!resturantName.equals("NULL")) {
 
-                                }
-
-                                @Override
-                                public void onCancelled(DatabaseError databaseError) {
-
-                                }
-                            });
-
+                            UserProfile mProfile = dataSnapshot.getValue(UserProfile.class);
+                            if (mProfile.getHistory() == null) {
+                                mProfile.setHistory(new ArrayList<History>());
+                            }
+                            mProfile.getHistory().add(0, dayOfChoice);
+                            mRef.child("user").child(uid).child("history").setValue(mProfile.getHistory());
+                            mRef.child("user").child(uid).child("todayChoice").setValue(utils.getEmptyHistory());
                         }
-                    }else{
+                    } else {
                         holder.placeTextView.setText(resturantName);
                     }
                 }
@@ -95,10 +100,10 @@ public class FriendsAdapter extends RecyclerView.Adapter<FriendsAdapter.ViewHold
                         HashMap<String, String> notificationData = new HashMap<>();
                         notificationData.put("sent_authId", FirebaseAuth.getInstance().getCurrentUser().getUid());
                         mRef.child("notification").child(uid).push().setValue(notificationData);
+                        listener.onImageViewClick();
                     }
                 });
-
-
+                new GetImageTask().execute(dataSnapshot.child("avatarUrl").getValue(String.class), holder.head);
             }
 
             @Override
@@ -106,9 +111,6 @@ public class FriendsAdapter extends RecyclerView.Adapter<FriendsAdapter.ViewHold
 
             }
         });
-
-
-
 
 
     }
@@ -122,13 +124,13 @@ public class FriendsAdapter extends RecyclerView.Adapter<FriendsAdapter.ViewHold
 
     public void deleteFriend(int position) {
 
-        notifyItemRemoved(position);
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {
         TextView nameTextView;
         TextView placeTextView;
         ImageButton imageButton;
+        ImageView head;
 
         public ViewHolder(View view) {
             super(view);
@@ -142,6 +144,33 @@ public class FriendsAdapter extends RecyclerView.Adapter<FriendsAdapter.ViewHold
             nameTextView = view.findViewById(R.id.name_view);
             placeTextView = view.findViewById(R.id.place_view);
             imageButton = view.findViewById(R.id.imageButton);
+            head = view.findViewById(R.id.avatar_image);
         }
+    }
+
+    public class GetImageTask extends AsyncTask<Object,Object,Object> {
+
+        @Override
+        protected Object doInBackground(Object... objects) {
+            String urlString = (String) objects[0];
+            try {
+                InputStream in = new URL(urlString).openStream();
+                bitmap = BitmapFactory.decodeStream(in);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            return objects[1];
+        }
+
+        @Override
+        protected void onPostExecute(Object object) {
+            super.onPostExecute(object);
+            ImageView head = (ImageView) object;
+            head.setImageBitmap(bitmap);
+        }
+    }
+
+    public interface onImageViewClickListener{
+        void onImageViewClick();
     }
 }

@@ -6,9 +6,12 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.provider.ContactsContract;
+import android.provider.MediaStore;
+import android.support.annotation.NonNull;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.app.FragmentManager;
 import android.util.Log;
@@ -20,6 +23,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.l8411.wut2eat29.Activity.SettingsActivity;
+import com.example.l8411.wut2eat29.Fragment.DoVote;
 import com.example.l8411.wut2eat29.Fragment.HistoryFragment;
 import com.example.l8411.wut2eat29.Model.History;
 import com.example.l8411.wut2eat29.Model.Restaurant;
@@ -28,13 +32,19 @@ import com.example.l8411.wut2eat29.Fragment.ViewVoteFragment;
 import com.example.l8411.wut2eat29.Model.UserProfile;
 import com.example.l8411.wut2eat29.R;
 import com.example.l8411.wut2eat29.Utils.utils;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
@@ -54,6 +64,7 @@ public class ProfileFragment extends android.support.v4.app.Fragment implements 
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PROFILE = "profile";
+    private static final int RC_CHOOSE_PICTURE = 1;
 
     // TODO: Rename and change types of parameters
     private Bitmap bitmap;
@@ -66,6 +77,7 @@ public class ProfileFragment extends android.support.v4.app.Fragment implements 
     private ArrayList<String> top3Choices;
     private TextView mViewHistory;
     private TextView mViewVotes;
+    private TextView mDoVote;
     private TextView mSetting;
     private TextView mUserId;
     private View userView;
@@ -115,10 +127,11 @@ public class ProfileFragment extends android.support.v4.app.Fragment implements 
         mTodayChoice = rootView.findViewById(R.id.todayChoice);
         mViewHistory = rootView.findViewById(R.id.view_history);
         mViewVotes = rootView.findViewById(R.id.view_votes);
+        mDoVote = rootView.findViewById(R.id.do_vote);
         mSetting = rootView.findViewById(R.id.setting);
 
         final DatabaseReference mUserRef = mRef.child("user");
-        mUserRef.child(mAuth.getCurrentUser().getUid()).addListenerForSingleValueEvent(new ValueEventListener() {
+        mUserRef.child(mAuth.getCurrentUser().getUid()).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 mProfile = dataSnapshot.getValue(UserProfile.class);
@@ -141,14 +154,19 @@ public class ProfileFragment extends android.support.v4.app.Fragment implements 
                     mTodayChoice.setText(R.string.not_decided_yet);
                     if(!choice.getDateFormated().equals("NULL")){
                         mProfile.getHistory().add(0,choice);
-                        mUserRef.child(mAuth.getCurrentUser().getUid()).child("history").setValue(mProfile.getHistory());
-                        mUserRef.child(mAuth.getCurrentUser().getUid()).child("todayChoice").setValue( choice = utils.getEmptyHistory());
+                        mUserRef.child(mAuth.getCurrentUser().getUid()).child("todayChoice").setValue(utils.getEmptyHistory()).addOnSuccessListener(new OnSuccessListener<Void>() {
+                            @Override
+                            public void onSuccess(Void aVoid) {
+                                mUserRef.child(mAuth.getCurrentUser().getUid()).child("history").setValue(mProfile.getHistory());
+                            }
+                        });
                     }
                 }else{
                     mTodayChoice.setText(String.format("Choice: %s", mProfile.getTodayChoice().getResturant().getName()));
                 }
 
                 new GetImageTask().execute(mProfile.getAvatarUrl());
+
             }
 
             private ArrayList<String> getTopThreeChoice(List<History> history) {
@@ -158,7 +176,7 @@ public class ProfileFragment extends android.support.v4.app.Fragment implements 
                     String name = history.get(i).getResturant().getName();
                     if(frequentMap.containsKey(name)){
                         int current = frequentMap.get(name);
-                        frequentMap.put(name,current++);
+                        frequentMap.put(name,current + 1);
                     }else{
                         frequentMap.put(name, 1);
                     }
@@ -199,6 +217,7 @@ public class ProfileFragment extends android.support.v4.app.Fragment implements 
         });
         mViewHistory.setOnClickListener(this);
         mViewVotes.setOnClickListener(this);
+        mDoVote.setOnClickListener(this);
         mSetting.setOnClickListener(this);
         userView.setOnLongClickListener(this);
         return rootView;
@@ -216,7 +235,7 @@ public class ProfileFragment extends android.support.v4.app.Fragment implements 
         }
         if(id == R.id.view_votes){
             Log.d("Votes", "click");
-            ft.add(R.id.fragment_container, ViewVoteFragment.newInstance("UID")).commit();
+            ft.add(R.id.fragment_container, ViewVoteFragment.newInstance(mAuth.getCurrentUser().getUid())).commit();
             ft.addToBackStack("Votes");
             return;
         }
@@ -226,10 +245,17 @@ public class ProfileFragment extends android.support.v4.app.Fragment implements 
             startActivity(intent);
             return;
         }
+        if(id == R.id.do_vote){
+            Log.d("Do Votes", "click");
+            ft.add(R.id.fragment_container, DoVote.newInstance()).commit();
+            ft.addToBackStack("DoVote");
+            return;
+        }
+
     }
 
     @Override
-    public boolean onLongClick(View view) {
+    public boolean onLongClick(final View view) {
         Log.d("long", R.id.view_user + "" + view.getId() + "");
         if(view.getId() == R.id.view_user){
             AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
@@ -243,17 +269,61 @@ public class ProfileFragment extends android.support.v4.app.Fragment implements 
                 public void onClick(DialogInterface dialogInterface, int i) {
                     String newNickName = editText.getText().toString();
                     mRef.child("user").child(mAuth.getCurrentUser().getUid()).child("userNickName").setValue(newNickName);
+                    mNickName.setText(newNickName);
                 }
             });
-
+            builder.setNeutralButton(R.string.upload_avatar, new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialogInterface, int i) {
+                    Intent choosePictureIntent = new Intent(Intent.ACTION_PICK,
+                            MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+                    if (choosePictureIntent.resolveActivity(getContext().getPackageManager()) != null) {
+                        startActivityForResult(choosePictureIntent, RC_CHOOSE_PICTURE);
+                    }
+                }
+            });
             builder.setNegativeButton(android.R.string.cancel, null);
             builder.create().show();
         }
         return false;
     }
 
-    class GetImageTask extends AsyncTask<String,Void,Void> {
 
+    @Override
+    public void onActivityResult(final int requestCode, final int resultCode, final Intent data) {
+        StorageReference storageReference = FirebaseStorage.getInstance().getReference().child("Avatar");
+        if (requestCode == RC_CHOOSE_PICTURE){
+            if (data != null && data.getData() != null) {
+                Uri uri = data.getData();
+                try {
+                    Bitmap bitmap = MediaStore.Images.Media.getBitmap(getActivity().getContentResolver(), uri);
+                    String picDatabaseKey = mAuth.getCurrentUser().getUid();
+                    ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                    bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
+                    byte[] uploadData = baos.toByteArray();
+                    UploadTask uploadTask = storageReference.child(picDatabaseKey).putBytes(uploadData);
+                    uploadTask.addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception e) {
+                            Log.d("Error", "upload failed");
+                        }
+                    });
+
+                    uploadTask.addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                        @Override
+                        public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                            mRef.child("user").child(mAuth.getCurrentUser().getUid()).child("avatarUrl").setValue(taskSnapshot.getDownloadUrl().toString());
+                        }
+                    });
+
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+    }
+
+    class GetImageTask extends AsyncTask<String,Void,Void> {
         @Override
         protected Void doInBackground(String... strings) {
             String urlString = strings[0];
