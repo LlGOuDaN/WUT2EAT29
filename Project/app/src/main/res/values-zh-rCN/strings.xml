@@ -78,7 +78,8 @@
     <string name="status_busy">状态设置为繁忙</string>
     <string name="upload_avatar">上传头像</string>
     <string name="s_ask_you_eat_together">%s 想和你一起吃</string>
-    <string name="do_vote">发起投票</string>
+    <string name="do_vote">投票</string>
+    <string name="uploadLimit">头像大小请小于3MB</string>
 
 
 </resources>

@@ -4,14 +4,18 @@ package com.example.l8411.wut2eat29.Fragment;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.annotation.Nullable;
+import android.support.v4.app.FragmentManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.style.BulletSpan;
+import android.util.Log;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.example.l8411.wut2eat29.Activity.MainActivity;
 import com.example.l8411.wut2eat29.Adapter.HistoryAdapter;
 import com.example.l8411.wut2eat29.Adapter.ViewVoteAdapter;
 import com.example.l8411.wut2eat29.R;
@@ -28,7 +32,7 @@ import java.util.Map;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class ViewVoteFragment extends Fragment {
+public class ViewVoteFragment extends Fragment implements View.OnKeyListener {
     private FirebaseAuth mAuth;
     private DatabaseReference mRef;
     private String mOwner;
@@ -94,7 +98,25 @@ public class ViewVoteFragment extends Fragment {
         recyclerView.setHasFixedSize(true);
         ViewVoteAdapter adapter = new ViewVoteAdapter(mRef,mAuth,mOwner);
         recyclerView.setAdapter(adapter);
+        recyclerView.requestFocus();
+        recyclerView.setOnKeyListener(this);
         return view;
     }
 
+    @Override
+    public boolean onKey(View view, int i, KeyEvent keyEvent) {
+        if (i == KeyEvent.KEYCODE_BACK) {
+            Log.d("back", "back click");
+            MainActivity main = (MainActivity) getContext();
+            getFragmentManager().popBackStack("Votes", FragmentManager.POP_BACK_STACK_INCLUSIVE);
+            main.navigationView.setVisibility(View.VISIBLE);
+            main.viewPager.setVisibility(View.VISIBLE);
+            if (main.viewPager.getCurrentItem() == 0) {
+                main.findViewById(R.id.search_view).setVisibility(View.VISIBLE);
+                main.findViewById(R.id.fab_here).setVisibility(View.VISIBLE);
+            }
+            return true;
+        }
+        return false;
+    }
 }

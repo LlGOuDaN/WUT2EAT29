@@ -80,6 +80,7 @@
     <string name="upload_avatar">Upload a Avatar</string>
     <string name="s_ask_you_eat_together">%s ask you to eat together</string>
     <string name="do_vote">Do Vote</string>
+    <string name="uploadLimit">Pleas Upload an Image less than 3MB</string>
 
 
 </resources>

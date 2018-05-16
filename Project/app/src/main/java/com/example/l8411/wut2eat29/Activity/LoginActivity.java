@@ -73,7 +73,7 @@ public class LoginActivity extends AppCompatActivity implements LoginFragment.On
     }
 
     private void initializeListener() {
-        mAuthListener = new FirebaseAuth.AuthStateListener() {
+        mAuthListener =     new FirebaseAuth.AuthStateListener() {
             @Override
             public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
                 FirebaseUser user = firebaseAuth.getCurrentUser();
@@ -209,4 +209,3 @@ public class LoginActivity extends AppCompatActivity implements LoginFragment.On
     }
 
 }
-

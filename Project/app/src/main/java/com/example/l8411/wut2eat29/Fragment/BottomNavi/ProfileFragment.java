@@ -316,6 +316,13 @@ public class ProfileFragment extends android.support.v4.app.Fragment implements 
                         }
                     });
 
+                    uploadTask.addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception e) {
+                            new AlertDialog.Builder(getContext()).setTitle(R.string.uploadLimit).create().show();
+                        }
+                    });
+
                 } catch (IOException e) {
                     e.printStackTrace();
                 }

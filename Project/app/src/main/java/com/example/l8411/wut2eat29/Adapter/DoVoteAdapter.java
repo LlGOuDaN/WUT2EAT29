@@ -43,7 +43,6 @@ public class DoVoteAdapter extends RecyclerView.Adapter<DoVoteAdapter.ViewHolder
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
                     mVoteOwnerIDList.add(dataSnapshot.getValue().toString());
-                    notifyDataSetChanged();
                     mRef.child("user").child(dataSnapshot.getValue().toString()).child("userNickName").addListenerForSingleValueEvent(new ValueEventListener() {
                         @Override
                         public void onDataChange(DataSnapshot dataSnapshot) {

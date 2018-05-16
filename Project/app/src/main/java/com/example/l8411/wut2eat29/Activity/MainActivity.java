@@ -331,7 +331,12 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
     @Override
     public void onBackPressed() {
-        this.moveTaskToBack(true);
+        if(getFragmentManager().getBackStackEntryCount() == 1){
+            this.moveTaskToBack(true);
+        }else{
+            super.onBackPressed();
+        }
+
     }
 }
 
