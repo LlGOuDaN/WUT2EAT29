@@ -135,7 +135,6 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         });
 
 
-
     }
 
 
@@ -244,7 +243,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         if (id == R.id.action_addContact) {
             mAddContactFragment = new AddContactFragment();
             FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-            fm.popBackStack(previousFrag, FragmentManager.POP_BACK_STACK_INCLUSIVE);
+            fm.popBackStackImmediate(previousFrag, FragmentManager.POP_BACK_STACK_INCLUSIVE);
             ft.add(R.id.fragment_container, mAddContactFragment).commit();
             ft.addToBackStack("AddContact");
             previousFrag = "AddContact";
@@ -258,7 +257,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         if (id == R.id.action_startVote) {
             mStartAVoteFragment = new StartAVoteFragment();
             FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-            fm.popBackStack(previousFrag, FragmentManager.POP_BACK_STACK_INCLUSIVE);
+            fm.popBackStackImmediate(previousFrag, FragmentManager.POP_BACK_STACK_INCLUSIVE);
             ft.add(R.id.fragment_container, mStartAVoteFragment).commit();
             ft.addToBackStack("StartAVote");
             previousFrag = "StartAVote";
@@ -271,7 +270,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         if (id == R.id.action_Invitation) {
             mInvitationFragment = new InvitationFragment();
             FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-            fm.popBackStack(previousFrag, FragmentManager.POP_BACK_STACK_INCLUSIVE);
+            fm.popBackStackImmediate(previousFrag, FragmentManager.POP_BACK_STACK_INCLUSIVE);
             ft.add(R.id.fragment_container, mInvitationFragment).commit();
             ft.addToBackStack("Invitation");
             previousFrag = "Invitation";
@@ -328,6 +327,11 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     @Override
     public boolean onQueryTextChange(String s) {
         return false;
+    }
+
+    @Override
+    public void onBackPressed() {
+        this.moveTaskToBack(true);
     }
 }
 

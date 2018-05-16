@@ -74,6 +74,10 @@
     <string name="are_you_sure">Are you sure?</string>
     <string name="make_choice_first">Please make a choice first.</string>
     <string name="notification_sent">Notification sent out!</string>
+    <string name="message">Message</string>
+    <string name="status_free">Status Set to Free</string>
+    <string name="status_busy">Status Set to Busy</string>
+    <string name="upload_avatar">Upload a Avatar</string>
     <string name="s_ask_you_eat_together">%s ask you to eat together</string>
     <string name="do_vote">Do Vote</string>
     <string name="you_haven_t_started_any_votes_yet">You haven\'t started any votes yet</string>

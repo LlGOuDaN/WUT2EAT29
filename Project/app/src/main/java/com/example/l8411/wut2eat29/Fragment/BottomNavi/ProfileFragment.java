@@ -272,7 +272,7 @@ public class ProfileFragment extends android.support.v4.app.Fragment implements 
                     mNickName.setText(newNickName);
                 }
             });
-            builder.setNeutralButton("Upload a Avatar", new DialogInterface.OnClickListener() {
+            builder.setNeutralButton(R.string.upload_avatar, new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialogInterface, int i) {
                     Intent choosePictureIntent = new Intent(Intent.ACTION_PICK,

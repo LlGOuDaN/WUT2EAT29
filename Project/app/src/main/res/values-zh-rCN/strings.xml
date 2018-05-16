@@ -73,6 +73,12 @@
     <string name="are_you_sure">你确定吗?</string>
     <string name="make_choice_first">请先做出一个选择.</string>
     <string name="notification_sent">提示已送出！</string>
+    <string name="message">消息</string>
+    <string name="status_free">状态设置为空闲</string>
+    <string name="status_busy">状态设置为繁忙</string>
+    <string name="upload_avatar">上传头像</string>
+    <string name="s_ask_you_eat_together">%s 想和你一起吃</string>
+    <string name="do_vote">发起投票</string>
 
 
 </resources>
