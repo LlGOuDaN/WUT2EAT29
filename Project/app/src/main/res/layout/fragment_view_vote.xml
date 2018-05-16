@@ -10,7 +10,7 @@
     <TextView
         android:layout_width="match_parent"
         android:layout_height="100dp"
-        android:text="@string/your_today_s_vote_s"
+        android:text="@string/you_haven_t_started_any_votes_yet"
         android:id="@+id/view_vote_top_text"
         android:textSize="25sp"
         android:paddingHorizontal="10dp"

@@ -70,7 +70,7 @@ public class ViewVoteFragment extends Fragment {
                         mRef.child("votes").child(entry.getKey()).child("resturant").addListenerForSingleValueEvent(new ValueEventListener() {
                             @Override
                             public void onDataChange(DataSnapshot dataSnapshot) {
-                                mTextView.setText(String.format(getString(R.string.your_today_s_vote_s),dataSnapshot.getValue().toString()));
+                                mTextView.setText(String.format("Restaurant: %s",dataSnapshot.getValue().toString()));
                             }
 
                             @Override

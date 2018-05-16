@@ -76,6 +76,7 @@
     <string name="notification_sent">Notification sent out!</string>
     <string name="s_ask_you_eat_together">%s ask you to eat together</string>
     <string name="do_vote">Do Vote</string>
+    <string name="you_haven_t_started_any_votes_yet">You haven\'t started any votes yet</string>
 
 
 </resources>

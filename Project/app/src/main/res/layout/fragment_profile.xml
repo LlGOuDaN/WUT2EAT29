@@ -165,7 +165,7 @@
                 android:background="@color/gap" />
 
             <TextView
-                android:drawableLeft="@drawable/ic_assessment_black_24dp"
+                android:drawableLeft="@drawable/icons8_approval_24"
                 android:id="@+id/do_vote"
                 android:layout_width="fill_parent"
                 android:layout_height="50dp"
