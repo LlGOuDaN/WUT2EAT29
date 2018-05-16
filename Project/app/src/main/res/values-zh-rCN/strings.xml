@@ -67,7 +67,7 @@
     <string name="user_does_not_exist">用户不存在！</string>
     <string name="success">成功！</string>
     <string name="invitation_sent">邀请已经发送</string>
-    <string name="your_today_s_vote_s">餐馆: %s</string>
+    <string name="your_today_s_vote_s">你今日还未发起投票</string>
     <string name="invite">邀请</string>
     <string name="choice_of_day">今日选择</string>
     <string name="are_you_sure">你确定吗?</string>
@@ -79,6 +79,6 @@
     <string name="upload_avatar">上传头像</string>
     <string name="s_ask_you_eat_together">%s 想和你一起吃</string>
     <string name="do_vote">发起投票</string>
-
+    <string name="restaurant_s">餐馆: %s</string>
 
 </resources>

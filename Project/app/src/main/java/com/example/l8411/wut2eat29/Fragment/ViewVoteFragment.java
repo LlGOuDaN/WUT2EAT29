@@ -4,14 +4,18 @@ package com.example.l8411.wut2eat29.Fragment;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.annotation.Nullable;
+import android.support.v4.app.FragmentManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.style.BulletSpan;
+import android.util.Log;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.example.l8411.wut2eat29.Activity.MainActivity;
 import com.example.l8411.wut2eat29.Adapter.HistoryAdapter;
 import com.example.l8411.wut2eat29.Adapter.ViewVoteAdapter;
 import com.example.l8411.wut2eat29.R;
@@ -70,7 +74,7 @@ public class ViewVoteFragment extends Fragment {
                         mRef.child("votes").child(entry.getKey()).child("resturant").addListenerForSingleValueEvent(new ValueEventListener() {
                             @Override
                             public void onDataChange(DataSnapshot dataSnapshot) {
-                                mTextView.setText(String.format(getString(R.string.your_today_s_vote_s),dataSnapshot.getValue().toString()));
+                                mTextView.setText(String.format(getString(R.string.restaurant_s),dataSnapshot.getValue().toString()));
                             }
 
                             @Override
@@ -96,5 +100,6 @@ public class ViewVoteFragment extends Fragment {
         recyclerView.setAdapter(adapter);
         return view;
     }
+
 
 }
