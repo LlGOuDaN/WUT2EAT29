@@ -33,6 +33,7 @@ public class ViewVoteAdapter extends RecyclerView.Adapter<ViewVoteAdapter.ViewHo
     private HashMap<String,Integer> mVoteDetails;
     private Object[] mVoteDetailsList;
     private ArrayList<String> mVoteUIDList;
+    private ArrayList<String> mVoteUIDListTwo;
     private ArrayList<String> mVoterNameList;
     private ArrayList<Integer> mVoterStatus;
 
@@ -41,6 +42,7 @@ public class ViewVoteAdapter extends RecyclerView.Adapter<ViewVoteAdapter.ViewHo
         this.mRef = Ref;
         this.mAuth = mAuth;
         this.mVoterNameList = new ArrayList<>();
+        this.mVoteUIDListTwo = new ArrayList<>();
         this.mVoterStatus = new ArrayList<>();
         this.mVoteUIDList = new ArrayList<>();
         final DatabaseReference mVoteRef = mRef.child("user").child(mVoteOwner).child("voteList");
@@ -56,25 +58,33 @@ public class ViewVoteAdapter extends RecyclerView.Adapter<ViewVoteAdapter.ViewHo
                                 mVote = dataSnapshot.getValue(Vote.class);
                                 mVoteDetails = mVote.getVoteDetails();
                                 mVoteDetailsList = mVoteDetails.entrySet().toArray();
+
                                 for ( Map.Entry<String,Integer> entry : mVoteDetails.entrySet() ) {
                                     mVoteUIDList.add(entry.getKey());
                                     mVoterStatus.add(entry.getValue());
                                 }
-                                for (String uid: mVoteUIDList
-                                     ) {
-                                    mRef.child("user").child(uid).child("userNickName").addListenerForSingleValueEvent(new ValueEventListener() {
-                                        @Override
-                                        public void onDataChange(DataSnapshot dataSnapshot) {
-                                            mVoterNameList.add(dataSnapshot.getValue().toString());
-                                            notifyDataSetChanged();
-                                        }
-
-                                        @Override
-                                        public void onCancelled(DatabaseError databaseError) {
-
-                                        }
-                                    });
-                                }
+//                                for (int i=0;i<mVoteUIDList.size();i++) {
+//                                    final int finalI = i;
+//                                    mRef.child("user").child(mVoteUIDList.get(i)).child("userNickName").addListenerForSingleValueEvent(new ValueEventListener() {
+//                                        @Override
+//                                        public void onDataChange(DataSnapshot dataSnapshot) {
+////                                            if(mVoterNameList.size()!=mVoteUIDList.size()){
+//                                                mVoterNameList.add(dataSnapshot.getValue().toString());
+//                                                mVoteUIDListTwo.add(mVoteUIDList.get(finalI));
+//                                                mVoterStatus.set(finalI,mVoteDetails.get(mVoteUIDListTwo.get(finalI)));
+////                                            }
+////                                            else{
+////                                                mVoterNameList.set(finalI,dataSnapshot.getValue().toString());
+////                                            }
+//                                            notifyDataSetChanged();
+//                                        }
+//
+//                                        @Override
+//                                        public void onCancelled(DatabaseError databaseError) {
+//
+//                                        }
+//                                    });
+//                                }
                                 notifyDataSetChanged();
                             }
 
@@ -105,10 +115,31 @@ public class ViewVoteAdapter extends RecyclerView.Adapter<ViewVoteAdapter.ViewHo
     }
 
     @Override
-    public void onBindViewHolder(ViewHolder holder, int position) {
-        String name = mVoterNameList.get(position);
+    public void onBindViewHolder(final ViewHolder holder, int position) {
+        mRef.child("user").child(mVoteUIDList.get(position)).child("userNickName").addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                String name = dataSnapshot.getValue().toString();
+                holder.VoterName.setText(name);
+//                                            if(mVoterNameList.size()!=mVoteUIDList.size()){
+//                mVoterNameList.add(dataSnapshot.getValue().toString());
+//                mVoteUIDListTwo.add(mVoteUIDList.get(finalI));
+//                mVoterStatus.set(finalI,mVoteDetails.get(mVoteUIDListTwo.get(finalI)));
+//                                            }
+//                                            else{
+//                                                mVoterNameList.set(finalI,dataSnapshot.getValue().toString());
+//                                            }
+                notifyDataSetChanged();
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+//        String name = mVoterNameList.get(position);
         Integer status = mVoterStatus.get(position);
-        holder.VoterName.setText(name);
+
         if(status == 1){
             holder.VoteStatus.setImageResource(R.drawable.icons8_thumbs_up_24);
         }else if(status ==2){
@@ -118,7 +149,7 @@ public class ViewVoteAdapter extends RecyclerView.Adapter<ViewVoteAdapter.ViewHo
 
     @Override
     public int getItemCount() {
-        return mVoterNameList.size();
+        return mVoteUIDList.size();
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder{

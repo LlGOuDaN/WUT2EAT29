@@ -103,7 +103,6 @@ public class ViewVoteFragment extends Fragment implements View.OnKeyListener {
         return view;
     }
 
-<<<<<<< HEAD
     @Override
     public boolean onKey(View view, int i, KeyEvent keyEvent) {
         if (i == KeyEvent.KEYCODE_BACK) {
@@ -120,7 +119,5 @@ public class ViewVoteFragment extends Fragment implements View.OnKeyListener {
         }
         return false;
     }
-=======
 
->>>>>>> a59222a57b2bc91d93a23efe7af997ece1017844
 }
