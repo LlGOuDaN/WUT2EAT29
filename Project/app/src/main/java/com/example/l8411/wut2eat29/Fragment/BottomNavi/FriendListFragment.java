@@ -9,6 +9,7 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -27,7 +28,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-public class FriendListFragment extends android.support.v4.app.Fragment implements FriendsAdapter.onImageViewClickListener, SwipeRefreshLayout.OnRefreshListener {
+public class FriendListFragment extends android.support.v4.app.Fragment implements FriendsAdapter.onImageViewClickListener, SwipeRefreshLayout.OnRefreshListener, View.OnKeyListener {
     private FriendsAdapter mFriendsAdapter;
     private FirebaseAuth mAuth;
     private DatabaseReference mRef;
@@ -120,5 +121,13 @@ public class FriendListFragment extends android.support.v4.app.Fragment implemen
                 swipeRefreshLayout.setRefreshing(false);
             }
         }, 1000);
+    }
+
+    @Override
+    public boolean onKey(View view, int i, KeyEvent keyEvent) {
+        if(i == KeyEvent.KEYCODE_BACK){
+
+        }
+        return false;
     }
 }

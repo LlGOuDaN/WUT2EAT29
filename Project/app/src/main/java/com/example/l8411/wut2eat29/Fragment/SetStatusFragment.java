@@ -1,5 +1,6 @@
 package com.example.l8411.wut2eat29.Fragment;
 
+import android.app.AlertDialog;
 import android.net.Uri;
 import android.os.Bundle;
 import android.app.Fragment;
@@ -13,6 +14,7 @@ import android.widget.TextView;
 
 import com.example.l8411.wut2eat29.Activity.SettingsActivity;
 import com.example.l8411.wut2eat29.R;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
@@ -70,14 +72,26 @@ public class SetStatusFragment extends android.support.v4.app.Fragment implement
     public void onClick(View view) {
         FirebaseAuth mAuth = FirebaseAuth.getInstance();
         DatabaseReference mRef = FirebaseDatabase.getInstance().getReference();
+        final AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
 
         if(view.getId() == R.id.textViewFree){
-            mRef.child("user").child(mAuth.getCurrentUser().getUid()).child("status").setValue(0);
+            mRef.child("user").child(mAuth.getCurrentUser().getUid()).child("status").setValue(0).addOnSuccessListener(new OnSuccessListener<Void>() {
+                @Override
+                public void onSuccess(Void aVoid) {
+                    builder.setTitle(R.string.message);
+                    builder.setMessage(R.string.status_free);
+                    builder.create().show();
+                }
+            });
+
             return;
         }
 
         if(view.getId() == R.id.textViewBusy){
             mRef.child("user").child(mAuth.getCurrentUser().getUid()).child("status").setValue(1);
+            builder.setTitle(R.string.message);
+            builder.setMessage(R.string.status_busy);
+            builder.create().show();
             return;
         }
 

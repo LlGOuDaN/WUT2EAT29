@@ -37,7 +37,7 @@ import java.util.List;
 
 
 
-public class StartAVoteFragment extends android.support.v4.app.Fragment  {
+public class StartAVoteFragment extends android.support.v4.app.Fragment implements View.OnKeyListener {
     private StartAVoteAdapter mStartAVoteAdapter;
     private FirebaseAuth mAuth;
     private DatabaseReference mRef;
@@ -143,15 +143,29 @@ public class StartAVoteFragment extends android.support.v4.app.Fragment  {
 
                     builder.setNegativeButton(android.R.string.cancel, null);
                     builder.create().show();
-
-
-
-
-
                 }
             }
         });
+        recyclerView.requestFocus();
+        recyclerView.setOnKeyListener(this);
         return StartAVoteView;
     }
 
+    @Override
+    public boolean onKey(View view, int i, KeyEvent keyEvent) {
+        if (i == KeyEvent.KEYCODE_BACK) {
+            Log.d("back", "back click");
+            MainActivity main = (MainActivity) getContext();
+            getFragmentManager().popBackStack("StartAVote", FragmentManager.POP_BACK_STACK_INCLUSIVE);
+            main.navigationView.setVisibility(View.VISIBLE);
+            main.viewPager.setVisibility(View.VISIBLE);
+            if (main.viewPager.getCurrentItem() == 0) {
+                main.findViewById(R.id.search_view).setVisibility(View.VISIBLE);
+                main.findViewById(R.id.fab_here).setVisibility(View.VISIBLE);
+            }
+            return true;
+        }
+        Log.d("back", "back click");
+        return false;
+    }
 }
