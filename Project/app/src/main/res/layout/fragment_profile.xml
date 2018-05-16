@@ -159,6 +159,23 @@
                 android:text="@string/view_votes"
                 android:textSize="16sp"
                 android:background="@color/colorWhite"/>
+            <View
+                android:layout_width="fill_parent"
+                android:layout_height="1.0dip"
+                android:background="@color/gap" />
+
+            <TextView
+                android:drawableLeft="@drawable/ic_assessment_black_24dp"
+                android:id="@+id/do_vote"
+                android:layout_width="fill_parent"
+                android:layout_height="50dp"
+                android:drawablePadding="10dp"
+                android:gravity="center_vertical"
+                android:paddingLeft="16dp"
+                android:paddingRight="16dp"
+                android:text="@string/do_vote"
+                android:textSize="16sp"
+                android:background="@color/colorWhite"/>
 
             <View
                 android:layout_width="fill_parent"

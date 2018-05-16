@@ -20,7 +20,7 @@
     <string name="b">B</string>
     <string name="c">C</string>
     <string name="view_history">浏览历史</string>
-    <string name="view_votes">查看投票</string>
+    <string name="view_votes">查看我的投票</string>
     <string name="title">今晚吃啥</string>
     <string name="search_place_hint">搜索地点</string>
     <string name="search">搜索</string>
@@ -67,7 +67,7 @@
     <string name="user_does_not_exist">用户不存在！</string>
     <string name="success">成功！</string>
     <string name="invitation_sent">邀请已经发送</string>
-    <string name="your_today_s_vote_s">你今天的投票: %s</string>
+    <string name="your_today_s_vote_s">餐馆: %s</string>
     <string name="invite">邀请</string>
     <string name="choice_of_day">今日选择</string>
     <string name="are_you_sure">你确定吗?</string>
@@ -77,6 +77,8 @@
     <string name="status_free">状态设置为空闲</string>
     <string name="status_busy">状态设置为繁忙</string>
     <string name="upload_avatar">上传头像</string>
+    <string name="s_ask_you_eat_together">%s 想和你一起吃</string>
+    <string name="do_vote">发起投票</string>
 
 
 </resources>

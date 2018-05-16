@@ -23,6 +23,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.l8411.wut2eat29.Activity.SettingsActivity;
+import com.example.l8411.wut2eat29.Fragment.DoVote;
 import com.example.l8411.wut2eat29.Fragment.HistoryFragment;
 import com.example.l8411.wut2eat29.Model.History;
 import com.example.l8411.wut2eat29.Model.Restaurant;
@@ -76,6 +77,7 @@ public class ProfileFragment extends android.support.v4.app.Fragment implements 
     private ArrayList<String> top3Choices;
     private TextView mViewHistory;
     private TextView mViewVotes;
+    private TextView mDoVote;
     private TextView mSetting;
     private TextView mUserId;
     private View userView;
@@ -125,6 +127,7 @@ public class ProfileFragment extends android.support.v4.app.Fragment implements 
         mTodayChoice = rootView.findViewById(R.id.todayChoice);
         mViewHistory = rootView.findViewById(R.id.view_history);
         mViewVotes = rootView.findViewById(R.id.view_votes);
+        mDoVote = rootView.findViewById(R.id.do_vote);
         mSetting = rootView.findViewById(R.id.setting);
 
         final DatabaseReference mUserRef = mRef.child("user");
@@ -214,6 +217,7 @@ public class ProfileFragment extends android.support.v4.app.Fragment implements 
         });
         mViewHistory.setOnClickListener(this);
         mViewVotes.setOnClickListener(this);
+        mDoVote.setOnClickListener(this);
         mSetting.setOnClickListener(this);
         userView.setOnLongClickListener(this);
         return rootView;
@@ -231,7 +235,7 @@ public class ProfileFragment extends android.support.v4.app.Fragment implements 
         }
         if(id == R.id.view_votes){
             Log.d("Votes", "click");
-            ft.add(R.id.fragment_container, ViewVoteFragment.newInstance()).commit();
+            ft.add(R.id.fragment_container, ViewVoteFragment.newInstance(mAuth.getCurrentUser().getUid())).commit();
             ft.addToBackStack("Votes");
             return;
         }
@@ -241,6 +245,13 @@ public class ProfileFragment extends android.support.v4.app.Fragment implements 
             startActivity(intent);
             return;
         }
+        if(id == R.id.do_vote){
+            Log.d("Do Votes", "click");
+            ft.add(R.id.fragment_container, DoVote.newInstance()).commit();
+            ft.addToBackStack("DoVote");
+            return;
+        }
+
     }
 
     @Override

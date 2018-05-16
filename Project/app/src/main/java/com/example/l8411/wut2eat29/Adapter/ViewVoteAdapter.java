@@ -27,6 +27,7 @@ import java.util.TreeMap;
 
 public class ViewVoteAdapter extends RecyclerView.Adapter<ViewVoteAdapter.ViewHolder>{
     private Vote mVote;
+    private String mVoteOwner;
     private DatabaseReference mRef;
     private FirebaseAuth mAuth;
     private HashMap<String,Integer> mVoteDetails;
@@ -35,13 +36,14 @@ public class ViewVoteAdapter extends RecyclerView.Adapter<ViewVoteAdapter.ViewHo
     private ArrayList<String> mVoterNameList;
     private ArrayList<Integer> mVoterStatus;
 
-    public ViewVoteAdapter(DatabaseReference Ref, FirebaseAuth mAuth) {
+    public ViewVoteAdapter(DatabaseReference Ref, FirebaseAuth mAuth, String Owner) {
+        this.mVoteOwner = Owner;
         this.mRef = Ref;
         this.mAuth = mAuth;
         this.mVoterNameList = new ArrayList<>();
         this.mVoterStatus = new ArrayList<>();
         this.mVoteUIDList = new ArrayList<>();
-        final DatabaseReference mVoteRef = mRef.child("user").child(mAuth.getCurrentUser().getUid()).child("voteList");
+        final DatabaseReference mVoteRef = mRef.child("user").child(mVoteOwner).child("voteList");
         mVoteRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {

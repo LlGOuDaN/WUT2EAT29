@@ -31,13 +31,17 @@ import java.util.Map;
 public class ViewVoteFragment extends Fragment {
     private FirebaseAuth mAuth;
     private DatabaseReference mRef;
+    private String mOwner;
 
     public ViewVoteFragment() {
         // Required empty public constructor
     }
 
-    public static ViewVoteFragment newInstance(){
+    public static ViewVoteFragment newInstance(String Owner){
         ViewVoteFragment fragment = new ViewVoteFragment();
+        Bundle bundle = new Bundle();
+        bundle.putString("OwnerID", Owner);
+        fragment.setArguments(bundle);
         return fragment;
     }
 
@@ -46,6 +50,9 @@ public class ViewVoteFragment extends Fragment {
         super.onCreate(savedInstanceState);
         mAuth = FirebaseAuth.getInstance();
         mRef = FirebaseDatabase.getInstance().getReference();
+        Bundle bundle = this.getArguments();
+        if(bundle != null){
+        mOwner = bundle.getString("OwnerID");}
     }
 
     @Override
@@ -54,7 +61,7 @@ public class ViewVoteFragment extends Fragment {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_view_vote, container, false);
         final TextView mTextView = view.findViewById(R.id.view_vote_top_text);
-        mRef.child("user").child(mAuth.getCurrentUser().getUid()).child("voteList").addListenerForSingleValueEvent(new ValueEventListener() {
+        mRef.child("user").child(mOwner).child("voteList").addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 HashMap<String,Boolean> voteMap =(HashMap<String,Boolean>) dataSnapshot.getValue();
@@ -85,7 +92,7 @@ public class ViewVoteFragment extends Fragment {
         RecyclerView recyclerView = view.findViewById(R.id.view_vote_recycler_view);
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         recyclerView.setHasFixedSize(true);
-        ViewVoteAdapter adapter = new ViewVoteAdapter(mRef,mAuth);
+        ViewVoteAdapter adapter = new ViewVoteAdapter(mRef,mAuth,mOwner);
         recyclerView.setAdapter(adapter);
         return view;
     }
