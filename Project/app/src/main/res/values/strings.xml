@@ -68,7 +68,7 @@
     <string name="user_does_not_exist">User does not exist!</string>
     <string name="success">Success!</string>
     <string name="invitation_sent">The invitation has been sent</string>
-    <string name="your_today_s_vote_s">Restaurant: %s</string>
+    <string name="your_today_s_vote_s">No vote is own by you yet</string>
     <string name="invite">Invite</string>
     <string name="choice_of_day">You Choice of Day</string>
     <string name="are_you_sure">Are you sure?</string>
@@ -81,6 +81,6 @@
     <string name="s_ask_you_eat_together">%s ask you to eat together</string>
     <string name="do_vote">Do Vote</string>
     <string name="uploadLimit">Pleas Upload an Image less than 3MB</string>
-
+    <string name="restaurant_s">Restaurant: %s</string>
 
 </resources>

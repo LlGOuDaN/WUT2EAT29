@@ -74,7 +74,7 @@ public class ViewVoteFragment extends Fragment implements View.OnKeyListener {
                         mRef.child("votes").child(entry.getKey()).child("resturant").addListenerForSingleValueEvent(new ValueEventListener() {
                             @Override
                             public void onDataChange(DataSnapshot dataSnapshot) {
-                                mTextView.setText(String.format(getString(R.string.your_today_s_vote_s),dataSnapshot.getValue().toString()));
+                                mTextView.setText(String.format(getString(R.string.restaurant_s),dataSnapshot.getValue().toString()));
                             }
 
                             @Override
@@ -103,6 +103,7 @@ public class ViewVoteFragment extends Fragment implements View.OnKeyListener {
         return view;
     }
 
+<<<<<<< HEAD
     @Override
     public boolean onKey(View view, int i, KeyEvent keyEvent) {
         if (i == KeyEvent.KEYCODE_BACK) {
@@ -119,4 +120,7 @@ public class ViewVoteFragment extends Fragment implements View.OnKeyListener {
         }
         return false;
     }
+=======
+
+>>>>>>> a59222a57b2bc91d93a23efe7af997ece1017844
 }
